@@ -10,8 +10,13 @@
 #define MAX_BURST_SIZE 16
 #endif
 
+// For more efficient memory operations the arrays are
+// buffered in a local cache.
+// To optimize the kernels either change MEMORY_WIDTH 
+// and MAX_BURST_SIZE to the hardware specification or
+// or directly specify a size of the local array.
 #ifndef LOCAL_MEM_ARRAY_SIZE
-#define LOCAL_MEM_ARRAY_SIZE (MAX_BURST_SIZE * MEMORY_WIDTH / sizeof(STREAM_TYPE))
+#define LOCAL_MEM_ARRAY_SIZE (MAX_BURST_SIZE * (MEMORY_WIDTH / (8 * sizeof(STREAM_TYPE))))
 #endif
 
 __kernel
@@ -43,11 +48,11 @@ void add(__global const STREAM_TYPE * restrict in1,
     __local STREAM_TYPE tmp_out[LOCAL_MEM_ARRAY_SIZE];
     for (uint i=0; i<array_size; i = i + LOCAL_MEM_ARRAY_SIZE){
         
-        #pragma unroll
+        #pragma unroll 
         for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in1[k] = in1[i + k];
         }
-        #pragma unroll
+        #pragma unroll 
         for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in2[k] = in2[i + k];
         }
