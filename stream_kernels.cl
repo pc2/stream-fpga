@@ -1,5 +1,5 @@
 #ifndef STREAM_TYPE
-#define STREAM_TYPE double
+#define STREAM_TYPE float
 #endif
 
 #ifndef MEMORY_WIDTH
