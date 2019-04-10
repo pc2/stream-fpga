@@ -43,27 +43,26 @@ void add(__global const STREAM_TYPE * restrict in1,
           __global const STREAM_TYPE * restrict in2,
           __global STREAM_TYPE * restrict out,
           uint array_size) {
-    // two input arrays, so only half of the size
-    __local STREAM_TYPE tmp_in1[LOCAL_MEM_ARRAY_SIZE / 2];   
-    __local STREAM_TYPE tmp_in2[LOCAL_MEM_ARRAY_SIZE / 2];
-    __local STREAM_TYPE tmp_out[LOCAL_MEM_ARRAY_SIZE / 2];
-    for (uint i=0; i<array_size; i = i + LOCAL_MEM_ARRAY_SIZE / 2){
+    __local STREAM_TYPE tmp_in1[LOCAL_MEM_ARRAY_SIZE];   
+    __local STREAM_TYPE tmp_in2[LOCAL_MEM_ARRAY_SIZE];
+    __local STREAM_TYPE tmp_out[LOCAL_MEM_ARRAY_SIZE];
+    for (uint i=0; i<array_size; i = i + LOCAL_MEM_ARRAY_SIZE){
         
         #pragma unroll 
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in1[k] = in1[i + k];
         }
         #pragma unroll 
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in2[k] = in2[i + k];
         }
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_out[k] = tmp_in1[k] + tmp_in2[k];
         }
 
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             out[i+k] = tmp_out[k];
         }
     }
@@ -95,26 +94,26 @@ void triad(__global const STREAM_TYPE * restrict in1,
           __global STREAM_TYPE * restrict out,
           STREAM_TYPE scalar,
           uint array_size) {
-    __local STREAM_TYPE tmp_in1[LOCAL_MEM_ARRAY_SIZE / 2];   
-    __local STREAM_TYPE tmp_in2[LOCAL_MEM_ARRAY_SIZE / 2];
-    __local STREAM_TYPE tmp_out[LOCAL_MEM_ARRAY_SIZE / 2];
-    for (uint i=0; i<array_size; i = i + LOCAL_MEM_ARRAY_SIZE / 2){
+    __local STREAM_TYPE tmp_in1[LOCAL_MEM_ARRAY_SIZE];   
+    __local STREAM_TYPE tmp_in2[LOCAL_MEM_ARRAY_SIZE];
+    __local STREAM_TYPE tmp_out[LOCAL_MEM_ARRAY_SIZE];
+    for (uint i=0; i<array_size; i = i + LOCAL_MEM_ARRAY_SIZE){
         
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in1[k] = in1[i + k];
         }
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_in2[k] = scalar * in2[i + k];
         }
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             tmp_out[k] = tmp_in1[k] + tmp_in2[k];
         }
 
         #pragma unroll
-        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE / 2; k++){
+        for (uint k = 0; k < LOCAL_MEM_ARRAY_SIZE; k++){
             out[i+k] = tmp_out[k];
         }
     }
