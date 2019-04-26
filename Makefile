@@ -25,10 +25,24 @@ AOCL_LINK_CONFIG := $(shell aocl link-config )
 CXX := g++
 AOC := aoc
 
+BOARD := p520_hpc_sg280l
+
 ##
 # Change aoc params to the ones desired (emulation,simulation,synthesis).
 #
-AOC_PARAMS := -march=emulator
+#AOC_PARAMS := -march=emulator
+AOC_PARAMS := -board=$(BOARD) 
+
+ifdef PROFILE
+	AOC_PARAMS += -profile
+endif
+
+ifdef REPORT
+	AOC_PARAMS += -rtl -report
+endif
+ifdef EMULATE
+	AOC_PARAMS := -march=emulator
+endif
 
 TARGET := stream_fpga
 KERNEL_SRCS := stream_kernels.cl
