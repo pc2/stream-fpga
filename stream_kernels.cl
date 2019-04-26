@@ -1,11 +1,16 @@
 #ifndef STREAM_TYPE
-#define STREAM_TYPE float16
+#define STREAM_TYPE float
+#endif
+
+#ifndef UNROLL_COUNT
+#define UNROLL_COUNT 16
 #endif
 
 __kernel
 void copy(__global const STREAM_TYPE * restrict in,
           __global STREAM_TYPE * restrict out,
           uint array_size) {
+    #pragma unroll UNROLL_COUNT
     for(uint i = 0; i < array_size; i++){
         out[i] = in[i];
     }
@@ -17,6 +22,7 @@ void add(__global const STREAM_TYPE * restrict in1,
           __global STREAM_TYPE * restrict out,
           uint array_size) {
     
+    #pragma unroll UNROLL_COUNT
     for (uint i=0; i<array_size; i++){
         out[i] = in1[i] + in2[i];
     }
@@ -28,6 +34,7 @@ void scalar(__global const STREAM_TYPE * restrict in,
           STREAM_TYPE scalar,
           uint array_size) {
     
+    #pragma unroll UNROLL_COUNT
     for (uint i=0; i<array_size; i++){
         out[i] = scalar * in[i];
     }
@@ -40,6 +47,7 @@ void triad(__global const STREAM_TYPE * restrict in1,
           STREAM_TYPE scalar,
           uint array_size) {
     
+    #pragma unroll UNROLL_COUNT
     for (uint i=0; i<array_size; i++){
         out[i] = in1[i] + scalar * in2[i];
     }
