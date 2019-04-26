@@ -24,8 +24,15 @@ AOCL_LINK_CONFIG := $(shell aocl link-config )
 # Used compilers for C code and OpenCL kernels
 CXX := g++
 AOC := aoc
+MKDIR_P := mkdir -p
+
+KERNEL_SRCS := stream_kernels.cl
+KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
 BOARD := p520_hpc_sg280l
+AOC_VERSION := 18.1.1_hpc
+
+BIN_DIR := bin/
 
 ##
 # Change aoc params to the ones desired (emulation,simulation,synthesis).
@@ -35,33 +42,36 @@ AOC_PARAMS := -board=$(BOARD)
 
 ifdef PROFILE
 	AOC_PARAMS += -profile
+	OUTPUT_NAME := $(OUTPUT_NAME)_profile
 endif
 
 ifdef REPORT
 	AOC_PARAMS += -rtl -report
+	OUTPUT_NAME := $(OUTPUT_NAME)_report
 endif
 ifdef EMULATE
 	AOC_PARAMS := -march=emulator
+	OUTPUT_NAME := $(OUTPUT_NAME)_emulate
 endif
 
-TARGET := stream_fpga
-KERNEL_SRCS := stream_kernels.cl
-KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
+SRCS := stream_fpga.cpp
+TARGET := $(SRCS:.cpp=)$(OUTPUT_NAME)
+KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(OUTPUT_NAME)
 
-SRCS := $(TARGET).cpp
+all: $(BIN_DIR)$(TARGET) $(BIN_DIR)$(KERNEL_TARGET).aocx
 
-all: $(TARGET) $(KERNEL_INPUTS)
+$(BIN_DIR)$(TARGET): 
+	$(MKDIR_P) $(BIN_DIR)
+	$(CXX) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
-$(TARGET): 
-	$(CXX) $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(TARGET)
+$(BIN_DIR)%.aocx: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -o $(BIN_DIR)$(KERNEL_TARGET) $<
 
-%.aocx: %.cl
-	$(AOC) $(AOC_PARAMS) $<
+cleanhost:
+	rm -f $(BIN_DIR)$(TARGET)
 
-
-clean:
-	rm -f $(TARGET)
-
-cleanall: clean
-	rm -f *.aoco *.aocr *.aocx 
+cleanall: cleanhost
+	rm -f *.aoco *.aocr *.aocx *.source
 	rm -rf $(KERNEL_SRCS:.cl=)
+	rm -rf $(BIN_DIR)
