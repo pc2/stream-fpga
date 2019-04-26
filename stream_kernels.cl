@@ -1,16 +1,6 @@
 #ifndef STREAM_TYPE
-#define STREAM_TYPE double
+#define STREAM_TYPE float16
 #endif
-
-#ifndef MEMORY_WIDTH
-#define MEMORY_WIDTH 512
-#endif
-
-#ifndef MAX_BURST_SIZE
-#define MAX_BURST_SIZE 16
-#endif
-
-#define LOCAL_MEM_ARRAY_SIZE (MAX_BURST_SIZE * MEMORY_WIDTH / sizeof(STREAM_TYPE))
 
 __kernel
 void copy(__global const STREAM_TYPE * restrict in,
