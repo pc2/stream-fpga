@@ -22,7 +22,7 @@ AOCL_COMPILE_CONFIG := $(shell aocl compile-config )
 AOCL_LINK_CONFIG := $(shell aocl link-config )
 
 # Used compilers for C code and OpenCL kernels
-CXX := g++
+CXX := g++ --std=c++11
 AOC := aoc
 MKDIR_P := mkdir -p
 
@@ -40,33 +40,41 @@ BIN_DIR := bin/
 #AOC_PARAMS := -march=emulator
 AOC_PARAMS := -board=$(BOARD) 
 
-ifdef PROFILE
-	AOC_PARAMS += -profile
-	OUTPUT_NAME := $(OUTPUT_NAME)_profile
-endif
-
-ifdef REPORT
-	AOC_PARAMS += -rtl -report
-	OUTPUT_NAME := $(OUTPUT_NAME)_report
-endif
-ifdef EMULATE
-	AOC_PARAMS := -march=emulator
-	OUTPUT_NAME := $(OUTPUT_NAME)_emulate
-endif
-
+STREAM_ARRAY_SIZE := 100000000
 SRCS := stream_fpga.cpp
-TARGET := $(SRCS:.cpp=)$(OUTPUT_NAME)
+TARGET := $(SRCS:.cpp=)
 KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(OUTPUT_NAME)
 
-all: $(BIN_DIR)$(TARGET) $(BIN_DIR)$(KERNEL_TARGET).aocx
+all: host kernel
 
-$(BIN_DIR)$(TARGET): 
+host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
+	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE)  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
-$(BIN_DIR)%.aocx: $(KERNEL_SRCS)
+no_interleaving_host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -o $(BIN_DIR)$(KERNEL_TARGET) $<
+	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
+
+
+kernel: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
+
+emulate_kernel: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
+
+kernel_profile: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -profile -p $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
+
+no_interleave_kernel_profile: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -profile -no-interleaving=default -p $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
+
+no_interleave_kernel: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -no-interleaving=default -p $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
 
 cleanhost:
 	rm -f $(BIN_DIR)$(TARGET)
