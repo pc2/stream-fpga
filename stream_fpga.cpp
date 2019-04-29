@@ -221,7 +221,7 @@ int main(int argc, char * argv[])
     int			BytesPerWord;
     int			k;
     ssize_t		j;
-    STREAM_TYPE		scalar;
+    STREAM_TYPE		test_scalar, scalar;
     double		t, times[6][NTIMES];
 
     /* --- SETUP --- determine precision and check timing --- */
@@ -261,36 +261,9 @@ int main(int argc, char * argv[])
 	    C[j] = 0.0;
 	}
 
-    if  ( (quantum = checktick()) >= 1) 
-	printf("Your clock granularity/precision appears to be "
-	    "%d microseconds.\n", quantum);
-    else {
-	printf("Your clock granularity appears to be "
-	    "less than one microsecond.\n");
-	quantum = 1;
-    }
-
-    t = mysecond();
-    for (j = 0; j < STREAM_ARRAY_SIZE; j++)
-		A[j] = 2.0E0 * A[j];
-    t = 1.0E6 * (mysecond() - t);
-
-    printf("Each test below will take on the order"
-	" of %d microseconds.\n", (int) t  );
-    printf("   (= %d clock ticks)\n", (int) (t/quantum) );
-    printf("Increase the size of the arrays if this shows that\n");
-    printf("you are not getting at least 20 clock ticks per test.\n");
-
-    printf(HLINE);
-
-    printf("WARNING -- The above is only a rough guideline.\n");
-    printf("For best results, please be sure you know the\n");
-    printf("precision of your system timer.\n");
-    printf(HLINE);
-
-	cl_int err;
-
-	//Setup Platform
+    int err;
+// Setting up OpenCL for FPGA
+    //Setup Platform
 	//Get Platform ID
 	std::vector<cl::Platform> PlatformList;
 	err = cl::Platform::get(&PlatformList);
@@ -354,22 +327,29 @@ int main(int argc, char * argv[])
 	cl::Program program(streamcontext, DeviceList, mybinaries);
 
 	// create the kernels
-	cl::Kernel copykernel(program, STREAM_COPY_KERNEL, &err);
-    std::cout << err << std::endl;
+    cl::Kernel testkernel(program, STREAM_SCALAR_KERNEL, &err);
+    assert(err==CL_SUCCESS);
+    cl::Kernel copykernel(program, STREAM_COPY_KERNEL, &err);
 	assert(err==CL_SUCCESS);
 	cl::Kernel scalarkernel(program, STREAM_SCALAR_KERNEL, &err);
-    std::cout << err << std::endl;
 	assert(err==CL_SUCCESS);
 	cl::Kernel addkernel(program, STREAM_ADD_KERNEL, &err);
-    std::cout << err << std::endl;
 	assert(err==CL_SUCCESS);
 	cl::Kernel triadkernel(program, STREAM_TRIAD_KERNEL, &err);
-    std::cout << err << std::endl;
 	assert(err==CL_SUCCESS);
 
 	scalar = 3.0;
+    test_scalar = 2.0E0;
 	//prepare kernels
-	//set arguments of copy kernel
+	err = testkernel.setArg(0, Buffer_A);
+	assert(err==CL_SUCCESS);
+	err = testkernel.setArg(1, Buffer_A);
+	assert(err==CL_SUCCESS);
+    err = testkernel.setArg(2, test_scalar);
+	assert(err==CL_SUCCESS);
+	err = testkernel.setArg(3, STREAM_ARRAY_SIZE);
+	assert(err==CL_SUCCESS);
+    //set arguments of copy kernel
 	err = copykernel.setArg(0, Buffer_A);
 	assert(err==CL_SUCCESS);
 	err = copykernel.setArg(1, Buffer_C);
@@ -405,6 +385,44 @@ int main(int argc, char * argv[])
 	assert(err==CL_SUCCESS);
 	err = triadkernel.setArg(4, STREAM_ARRAY_SIZE);
 	assert(err==CL_SUCCESS);
+    std::cout << "Prepared FPGA successfully!" << std::endl;
+    std::cout << HLINE;
+//End prepare FPGA
+
+    if  ( (quantum = checktick()) >= 1) 
+	printf("Your clock granularity/precision appears to be "
+	    "%d microseconds.\n", quantum);
+    else {
+	printf("Your clock granularity appears to be "
+	    "less than one microsecond.\n");
+	quantum = 1;
+    }
+
+    streamqueue.enqueueWriteBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+    streamqueue.finish();
+    
+    cl::Event e;
+    t = mysecond();
+	streamqueue.enqueueTask(testkernel, NULL, &e);
+	err=e.wait();	
+    t = 1.0E6 * (mysecond() - t);
+
+	streamqueue.enqueueReadBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+    err=streamqueue.finish();
+    
+
+    printf("Each test below will take on the order"
+	" of %d microseconds.\n", (int) t  );
+    printf("   (= %d clock ticks)\n", (int) (t/quantum) );
+    printf("Increase the size of the arrays if this shows that\n");
+    printf("you are not getting at least 20 clock ticks per test.\n");
+
+    printf(HLINE);
+
+    printf("WARNING -- The above is only a rough guideline.\n");
+    printf("For best results, please be sure you know the\n");
+    printf("precision of your system timer.\n");
+    printf(HLINE);
 
 	for (int k=0; k < NTIMES; k++) {
         std::cout << "Execute iteration " << (k + 1) << " of " << NTIMES << std::endl;
@@ -418,7 +436,6 @@ int main(int argc, char * argv[])
 
         assert(err==CL_SUCCESS);
 
-        cl::Event e;
 		times[0][k] = mysecond();
 		streamqueue.enqueueTask(copykernel, NULL, &e);
 		err=e.wait();
