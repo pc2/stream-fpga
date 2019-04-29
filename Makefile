@@ -66,15 +66,15 @@ emulate_kernel: $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -profile -p $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) -profile -o $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
 
 no_interleave_kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -profile -no-interleaving=default -p $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) -profile -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
 
 no_interleave_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -no-interleaving=default -p $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
 
 cleanhost:
 	rm -f $(BIN_DIR)$(TARGET)
