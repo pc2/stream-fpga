@@ -194,7 +194,7 @@ static double	avgtime[6] = {0}, maxtime[6] = {0},
 		mintime[6] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX, FLT_MAX, FLT_MAX};
 
 static std::string	label[6] = {"Copy:      ", "Scale:     ",
-    "Add:       ", "Triad:     ", "Ex Write:  ", "Ex Read:   "};
+    "Add:       ", "Triad:     ", "PCI Write: ", "PCI Read:  "};
 
 static double	bytes[6] = {
     2 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
@@ -227,7 +227,7 @@ int main(int argc, char * argv[])
     /* --- SETUP --- determine precision and check timing --- */
 
     printf(HLINE);
-    printf("STREAM FPGA version $Revision: 0.10 $\n");
+    printf("STREAM FPGA based in STREAM version $Revision: 5.10 $\n");
     printf(HLINE);
     BytesPerWord = sizeof(STREAM_TYPE);
     printf("This system uses %d bytes per array element.\n",
