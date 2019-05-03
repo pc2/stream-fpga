@@ -4,15 +4,28 @@
 #  Date:   2019/04/05
 #
 #  This makefile compiles the STREAM benchmark for FPGA and its OpenCL kernels.
+#  Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utitlity is supported.
 #  
-#  Depending on the use case you may want to change certain lines to the ones
-#  needed:
+#  Depending on the use case you may want to change certain lines:
 #      
-#      1. Modify the used compile and link flags
-#      2. Select the used compilers
+#      2. Give the location of the used compilers
 #      3. Modify the parameters for kernel compilation.
-#           - The default parameters are for the creation of emulated kernels
-#           - You may want to specify the targeted boards
+#           - The default rule is to compile the host code and synthesize 
+#             the kernel file.
+#           - You may want to change the board name
+#           - Also the kernel source file can be specified, if another one
+#             should be used.
+#           - Additional parameters may be added to aoc in AOC_PARAMS
+#
+#	To make it easier to generate different versions of the kernels, it
+#	is possible to specify a variable BUILD_SUFFIX when executing make.
+#	This suffix will be added to the kernel name after generation.
+#	Example:
+#		
+#		make BUILD_SUFFIX=18.1.1
+#
+#	Will build the host and the kernel.
+#	The kernel will be named stream_kernels_18.1.1
 #
 ##
 
@@ -30,9 +43,12 @@ KERNEL_SRCS := stream_kernels.cl
 KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
 BOARD := p520_hpc_sg280l
-AOC_VERSION := 18.1.1_hpc
 
 BIN_DIR := bin/
+
+ifdef BUILD_SUFFIX
+	EXT_BUILD_SUFFIX := _$(BUILD_SUFFIX)
+endif
 
 ##
 # Change aoc params to the ones desired (emulation,simulation,synthesis).
@@ -43,7 +59,7 @@ AOC_PARAMS := -board=$(BOARD)
 STREAM_ARRAY_SIZE := 100000000
 SRCS := stream_fpga.cpp
 TARGET := $(SRCS:.cpp=)
-KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(OUTPUT_NAME)
+KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(EXT_BUILD_SUFFIX)
 
 all: host kernel
 
@@ -62,7 +78,7 @@ kernel: $(KERNEL_SRCS)
 
 emulate_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
