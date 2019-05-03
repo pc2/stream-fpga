@@ -6,6 +6,9 @@
 #  This makefile compiles the STREAM benchmark for FPGA and its OpenCL kernels.
 #  Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utitlity is supported.
 #  
+#  #1 BUILD
+#  ------------
+#
 #  Depending on the use case you may want to change certain lines:
 #      
 #      2. Give the location of the used compilers
@@ -25,7 +28,26 @@
 #		make BUILD_SUFFIX=18.1.1
 #
 #	Will build the host and the kernel.
-#	The kernel will be named stream_kernels_18.1.1
+#	The kernel will be named stream_kernels_18.1.1 and the host
+#	stream_fpga_18.1.1
+#
+#   #2 EXECUTION
+#   -------------
+#
+#   The created host uses the kernel with the same build suffix by default.
+#   It tries to load it from the same directory it is executed in.
+#   
+#       ./stream_fpga_18.1.1 
+#
+#   will try to load the kernel file with the name
+#   stream_kernels_18.1.1.aocx by default.
+#   Additionally, the executable will interpret the first argument given as
+#   the path to the kernel that should be used.
+#   For example to use the kernel 'other.aocx':
+#
+#   	./stream_fpga_18.1.1 other.aocx
+#
+#   Also, relative and absolute paths to the kernel can be given.
 #
 ##
 
@@ -58,18 +80,18 @@ AOC_PARAMS := -board=$(BOARD)
 
 STREAM_ARRAY_SIZE := 100000000
 SRCS := stream_fpga.cpp
-TARGET := $(SRCS:.cpp=)
+TARGET := $(SRCS:.cpp=)$(EXT_BUILD_SUFFIX)
 KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(EXT_BUILD_SUFFIX)
 
 all: host kernel
 
 host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE)  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
+	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=$(KERNEL_TARGET).aocx  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
 no_interleaving_host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
+	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=$(KERNEL_TARGET).aocx -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
 
 
 kernel: $(KERNEL_SRCS)
