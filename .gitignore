@@ -1,0 +1,13 @@
+# WLM output files
+*.out
+
+#synthesized code
+*.aocx
+*.aocr
+*.source
+*.mod
+*.aoco
+
+#binaries and tmp folders
+stream_fpga
+stream_kernels

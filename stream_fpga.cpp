@@ -43,6 +43,7 @@
 /*-----------------------------------------------------------------------*/
 #include <math.h>
 #include <fstream>
+#include <iostream>
 #include <assert.h>
 #include <stdio.h>
 #include <string>
@@ -189,15 +190,17 @@
 #define STREAM_ADD_KERNEL "add"
 #define STREAM_TRIAD_KERNEL "triad"
 
-static double	avgtime[4] = {0}, maxtime[4] = {0},
-		mintime[4] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
+static double	avgtime[6] = {0}, maxtime[6] = {0},
+		mintime[6] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX, FLT_MAX, FLT_MAX};
 
-static std::string	label[4] = {"Copy:      ", "Scale:     ",
-    "Add:       ", "Triad:     "};
+static std::string	label[6] = {"Copy:      ", "Scale:     ",
+    "Add:       ", "Triad:     ", "Ex Write:  ", "Ex Read:   "};
 
-static double	bytes[4] = {
+static double	bytes[6] = {
     2 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
     2 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
+    3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
+    3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
     3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE,
     3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE
     };
@@ -212,14 +215,14 @@ static STREAM_TYPE C[STREAM_ARRAY_SIZE]  __attribute__ ((aligned (64)));
 extern double mysecond();
 extern void checkSTREAMresults();
 
-int main(void)
+int main(int argc, char * argv[])
 {
     int			quantum, checktick();
     int			BytesPerWord;
     int			k;
     ssize_t		j;
-    STREAM_TYPE		scalar;
-    double		t, times[4][NTIMES];
+    STREAM_TYPE		test_scalar, scalar;
+    double		t, times[6][NTIMES];
 
     /* --- SETUP --- determine precision and check timing --- */
 
@@ -258,82 +261,75 @@ int main(void)
 	    C[j] = 0.0;
 	}
 
-    if  ( (quantum = checktick()) >= 1) 
-	printf("Your clock granularity/precision appears to be "
-	    "%d microseconds.\n", quantum);
-    else {
-	printf("Your clock granularity appears to be "
-	    "less than one microsecond.\n");
-	quantum = 1;
-    }
-
-    t = mysecond();
-    for (j = 0; j < STREAM_ARRAY_SIZE; j++)
-		A[j] = 2.0E0 * A[j];
-    t = 1.0E6 * (mysecond() - t);
-
-    printf("Each test below will take on the order"
-	" of %d microseconds.\n", (int) t  );
-    printf("   (= %d clock ticks)\n", (int) (t/quantum) );
-    printf("Increase the size of the arrays if this shows that\n");
-    printf("you are not getting at least 20 clock ticks per test.\n");
-
-    printf(HLINE);
-
-    printf("WARNING -- The above is only a rough guideline.\n");
-    printf("For best results, please be sure you know the\n");
-    printf("precision of your system timer.\n");
-    printf(HLINE);
-
-	cl_int err;
-
-	//Setup Platform
+    int err;
+// Setting up OpenCL for FPGA
+    //Setup Platform
 	//Get Platform ID
 	std::vector<cl::Platform> PlatformList;
 	err = cl::Platform::get(&PlatformList);
 	assert(err==CL_SUCCESS);
 
+    cl::Platform platform = PlatformList[0];
+    std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
+
 	//Setup Device
 	//Get Device ID
 	std::vector<cl::Device> DeviceList;
-	err = PlatformList[0].getDevices(CL_DEVICE_TYPE_ALL, &DeviceList);
+	err = PlatformList[0].getDevices(CL_DEVICE_TYPE_ACCELERATOR, &DeviceList);
 	assert(err==CL_SUCCESS);
 	
 	//Create Context
 	cl::Context streamcontext(DeviceList);
 	assert(err==CL_SUCCESS);
-
-	
+    std::cout << "Device Name:   " << DeviceList[0].getInfo<CL_DEVICE_NAME>() << std::endl;
 	//Create Command queue
 	cl::CommandQueue streamqueue(streamcontext, DeviceList[0]); 
 	assert(err==CL_SUCCESS);
 
+#ifdef NO_INTERLEAVING
+	//Create Buffers for input and output
+	cl::Buffer Buffer_A(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_1_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
+	cl::Buffer Buffer_B(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_2_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
+	cl::Buffer Buffer_C(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_3_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
+#else
 	//Create Buffers for input and output
 	cl::Buffer Buffer_A(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
 	cl::Buffer Buffer_B(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
 	cl::Buffer Buffer_C(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-
-	//Write data to device
-	err = streamqueue.enqueueWriteBuffer(Buffer_A, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-	err = streamqueue.enqueueWriteBuffer(Buffer_B, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);	
-	err = streamqueue.enqueueWriteBuffer(Buffer_C, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
-	assert(err==CL_SUCCESS);
-	streamqueue.finish();
+#endif
 
 	//Read in binaries from file
-	std::ifstream aocx_stream(STREAM_FPGA_KERNEL, std::ios::in|std::ios::binary);
+    char* used_kernel = (char*) STREAM_FPGA_KERNEL;
+    if (argc > 1) {
+        std::cout << "Using kernel given as argument" << std::endl;
+        used_kernel = argv[1];
+    }
+    std::cout << "Kernel:        " << used_kernel << std::endl;
+    std::cout << HLINE;
+    std::ifstream aocx_stream(used_kernel, std::ifstream::binary);
+    if (!aocx_stream.is_open()){
+        std::cerr << "Not possible to open from given file!" << std::endl;
+        return 1;
+    }
+    
 	std::string prog(std::istreambuf_iterator<char>(aocx_stream), (std::istreambuf_iterator<char>()));
-	cl::Program::Binaries mybinaries (1, std::make_pair(prog.c_str(), prog.length()+1));
+    aocx_stream.seekg(0, aocx_stream.end);
+    unsigned file_size = aocx_stream.tellg();
+    aocx_stream.seekg(0,aocx_stream.beg);
+    char * buf = new char[file_size];
+    aocx_stream.read(buf, file_size);
+
+	cl::Program::Binaries mybinaries;
+    mybinaries.push_back({buf, file_size});
+    DeviceList.resize(1);
 
 	// Create the Program from the AOCX file.
 	cl::Program program(streamcontext, DeviceList, mybinaries);
 
-	// build the program
-	err=program.build(DeviceList);
-	assert(err==CL_SUCCESS);
-
 	// create the kernels
-	cl::Kernel copykernel(program, STREAM_COPY_KERNEL, &err);
+    cl::Kernel testkernel(program, STREAM_SCALAR_KERNEL, &err);
+    assert(err==CL_SUCCESS);
+    cl::Kernel copykernel(program, STREAM_COPY_KERNEL, &err);
 	assert(err==CL_SUCCESS);
 	cl::Kernel scalarkernel(program, STREAM_SCALAR_KERNEL, &err);
 	assert(err==CL_SUCCESS);
@@ -343,8 +339,17 @@ int main(void)
 	assert(err==CL_SUCCESS);
 
 	scalar = 3.0;
+    test_scalar = 2.0E0;
 	//prepare kernels
-	//set arguments of copy kernel
+	err = testkernel.setArg(0, Buffer_A);
+	assert(err==CL_SUCCESS);
+	err = testkernel.setArg(1, Buffer_A);
+	assert(err==CL_SUCCESS);
+    err = testkernel.setArg(2, test_scalar);
+	assert(err==CL_SUCCESS);
+	err = testkernel.setArg(3, STREAM_ARRAY_SIZE);
+	assert(err==CL_SUCCESS);
+    //set arguments of copy kernel
 	err = copykernel.setArg(0, Buffer_A);
 	assert(err==CL_SUCCESS);
 	err = copykernel.setArg(1, Buffer_C);
@@ -380,9 +385,57 @@ int main(void)
 	assert(err==CL_SUCCESS);
 	err = triadkernel.setArg(4, STREAM_ARRAY_SIZE);
 	assert(err==CL_SUCCESS);
+    std::cout << "Prepared FPGA successfully!" << std::endl;
+    std::cout << HLINE;
+//End prepare FPGA
+
+    if  ( (quantum = checktick()) >= 1) 
+	printf("Your clock granularity/precision appears to be "
+	    "%d microseconds.\n", quantum);
+    else {
+	printf("Your clock granularity appears to be "
+	    "less than one microsecond.\n");
+	quantum = 1;
+    }
+
+    streamqueue.enqueueWriteBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+    streamqueue.finish();
+    
+    cl::Event e;
+    t = mysecond();
+	streamqueue.enqueueTask(testkernel, NULL, &e);
+	err=e.wait();	
+    t = 1.0E6 * (mysecond() - t);
+
+	streamqueue.enqueueReadBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+    err=streamqueue.finish();
+    
+
+    printf("Each test below will take on the order"
+	" of %d microseconds.\n", (int) t  );
+    printf("   (= %d clock ticks)\n", (int) (t/quantum) );
+    printf("Increase the size of the arrays if this shows that\n");
+    printf("you are not getting at least 20 clock ticks per test.\n");
+
+    printf(HLINE);
+
+    printf("WARNING -- The above is only a rough guideline.\n");
+    printf("For best results, please be sure you know the\n");
+    printf("precision of your system timer.\n");
+    printf(HLINE);
 
 	for (int k=0; k < NTIMES; k++) {
-		cl::Event e;
+        std::cout << "Execute iteration " << (k + 1) << " of " << NTIMES << std::endl;
+	    //Write data to device
+	    times[4][k] = mysecond();
+        streamqueue.enqueueWriteBuffer(Buffer_A, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+	    streamqueue.enqueueWriteBuffer(Buffer_B, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);	
+	    streamqueue.enqueueWriteBuffer(Buffer_C, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
+	    err = streamqueue.finish();
+        times[4][k] = mysecond() - times[4][k];
+
+        assert(err==CL_SUCCESS);
+
 		times[0][k] = mysecond();
 		streamqueue.enqueueTask(copykernel, NULL, &e);
 		err=e.wait();
@@ -407,24 +460,23 @@ int main(void)
 		err=e.wait();
 		times[3][k] = mysecond() - times[3][k];
 		assert(err==CL_SUCCESS);
+        
+        // read the output
+        times[5][k] = mysecond();
+	    streamqueue.enqueueReadBuffer(Buffer_A, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
+	    streamqueue.enqueueReadBuffer(Buffer_B, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);
+	    streamqueue.enqueueReadBuffer(Buffer_C, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
+	    err=streamqueue.finish();
+        times[5][k] = mysecond() - times[5][k];
+        assert(err==CL_SUCCESS);
+
 	}	
-
-	// read the output
-	err=streamqueue.enqueueReadBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-	assert(err==CL_SUCCESS);
-	err=streamqueue.enqueueReadBuffer(Buffer_B, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);
-	assert(err==CL_SUCCESS);
-	err=streamqueue.enqueueReadBuffer(Buffer_C, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
-	assert(err==CL_SUCCESS);
-
-	err=streamqueue.finish();
-	assert(err==CL_SUCCESS);
 
 /*	--- SUMMARY --- */
 
     for (k=1; k<NTIMES; k++) /* note -- skip first iteration */
 	{
-	for (j=0; j<4; j++)
+	for (j=0; j<6; j++)
 	    {
 	    avgtime[j] = avgtime[j] + times[j][k];
 	    mintime[j] = MIN(mintime[j], times[j][k]);
@@ -433,7 +485,7 @@ int main(void)
 	}
     
     printf("Function    Best Rate MB/s  Avg time     Min time     Max time\n");
-    for (j=0; j<4; j++) {
+    for (j=0; j<6; j++) {
 		avgtime[j] = avgtime[j]/(double)(NTIMES-1);
 
 		printf("%s%12.1f  %11.6f  %11.6f  %11.6f\n", label[j].c_str(),
@@ -447,7 +499,6 @@ int main(void)
     /* --- Check Results --- */
     checkSTREAMresults();
     printf(HLINE);
-
     return 0;
 }
 
