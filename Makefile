@@ -6,60 +6,18 @@
 #  This makefile compiles the STREAM benchmark for FPGA and its OpenCL kernels.
 #  Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utitlity is supported.
 #  
-#  #1 BUILD
-#  ------------
-#
-#  Depending on the use case you may want to change certain lines:
-#      
-#      2. Give the location of the used compilers
-#      3. Modify the parameters for kernel compilation.
-#           - The default rule is to compile the host code and synthesize 
-#             the kernel file.
-#           - You may want to change the board name
-#           - Also the kernel source file can be specified, if another one
-#             should be used.
-#           - Additional parameters may be added to aoc in AOC_PARAMS
-#
-#	To make it easier to generate different versions of the kernels, it
-#	is possible to specify a variable BUILD_SUFFIX when executing make.
-#	This suffix will be added to the kernel name after generation.
-#	Example:
-#		
-#		make BUILD_SUFFIX=18.1.1
-#
-#	Will build the host and the kernel.
-#	The kernel will be named stream_kernels_18.1.1 and the host
-#	stream_fpga_18.1.1
-#
-#   #2 EXECUTION
-#   -------------
-#
-#   The created host uses the kernel with the same build suffix by default.
-#   It tries to load it from the same directory it is executed in.
-#   
-#       ./stream_fpga_18.1.1 
-#
-#   will try to load the kernel file with the name
-#   stream_kernels_18.1.1.aocx by default.
-#   Additionally, the executable will interpret the first argument given as
-#   the path to the kernel that should be used.
-#   For example to use the kernel 'other.aocx':
-#
-#   	./stream_fpga_18.1.1 other.aocx
-#
-#   Also, relative and absolute paths to the kernel can be given.
-#
-##
-
-
-# OpenCL compile and link flags.
-AOCL_COMPILE_CONFIG := $(shell aocl compile-config )
-AOCL_LINK_CONFIG := $(shell aocl link-config )
+#  Please read the README contained in this folder for more information and
+#  instructions how to compile and execute the benchmark.
 
 # Used compilers for C code and OpenCL kernels
 CXX := g++ --std=c++11
 AOC := aoc
+AOCL := aocl
 MKDIR_P := mkdir -p
+
+# OpenCL compile and link flags.
+AOCL_COMPILE_CONFIG := $(shell $(AOCL) compile-config )
+AOCL_LINK_CONFIG := $(shell $(AOCL) link-config )
 
 KERNEL_SRCS := stream_kernels.cl
 KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
