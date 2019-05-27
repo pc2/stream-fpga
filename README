@@ -1,6 +1,6 @@
 
 This repository contains the STREAM benchmark for FPGA and its OpenCL kernels.
-Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utitlity is supported.
+Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utility is supported.
 
 It is a modified implementation of the STREAM benchmark by John D. McCaplin, Ph.D.
 available at https://www.cs.virginia.edu/stream/
