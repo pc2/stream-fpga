@@ -1,0 +1,81 @@
+This file contains execution results for multiple systems administrated by the Paderborn Center for Parallel Computing (PC2) (https://pc2.upb.de).
+
+1.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.0.1
+
+    Interleaved Memory:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           35130.7     0.022776     0.022772     0.022782
+    Scale:          35138.5     0.022771     0.022767     0.022776
+    Add:            52705.5     0.022772     0.022768     0.022777
+    Triad:          48802.2     0.024593     0.024589     0.024598
+    PCI Write:       6303.5     0.190460     0.190369     0.190521
+    PCI Read:        3673.8     0.326716     0.326636     0.326799
+
+    Non-Interleaved:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           31992.3     0.025015     0.025006     0.025025
+    Scale:          32020.6     0.024990     0.024984     0.024997
+    Add:            48009.4     0.025003     0.024995     0.025012
+    Triad:          48005.8     0.025003     0.024997     0.025007
+    PCI Write:       6303.9     0.190423     0.190359     0.190566
+    PCI Read:        3771.6     0.318213     0.318168     0.318284
+
+
+
+2.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.1.1
+
+    Interleaved Memory:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           30875.9     0.025914     0.025910     0.025919
+    Scale:          30885.6     0.025905     0.025902     0.025911
+    Add:            46289.2     0.025928     0.025924     0.025935
+    Triad:          45613.4     0.026310     0.026308     0.026312
+    PCI Write:       6324.0     0.189800     0.189753     0.189862
+    PCI Read:        5587.3     0.214869     0.214773     0.214943
+
+    Non-Interleaved:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           31767.5     0.025188     0.025183     0.025196
+    Scale:          31777.7     0.025177     0.025175     0.025181
+    Add:            47672.0     0.025174     0.025172     0.025177
+    Triad:          47559.0     0.025236     0.025232     0.025246
+    PCI Write:       6316.0     0.190029     0.189994     0.190060
+    PCI Read:        5728.0     0.209528     0.209497     0.209626
+
+
+
+3.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.1
+
+
+
+4.  System:     FPGA Research Clusters
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
+    FPGA:       proFPGA A10 GX1150 (Intel Aria 10)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
+
+    Interleaved Memory:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           26767.5     0.029892     0.029887     0.029901
+    Scale:          27112.3     0.029562     0.029507     0.029594
+    Add:            28839.9     0.041659     0.041609     0.041704
+    Triad:          28848.8     0.041656     0.041596     0.041725
+    PCI Write:       6419.2     0.187463     0.186940     0.187959
+    PCI Read:        6356.5     0.192998     0.188783     0.196114
+
+    Non-Interleaved:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           15553.6     0.051469     0.051435     0.051553
+    Scale:          32581.2     0.024617     0.024554     0.024661
+    Add:            23444.7     0.051247     0.051184     0.051280
+    Triad:          23370.0     0.051414     0.051348     0.051455
+    PCI Write:       6415.0     0.187305     0.187060     0.187613
+    PCI Read:        6478.7     0.189044     0.185221     0.193868
