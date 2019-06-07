@@ -14,10 +14,13 @@ Makefile:
 1. Check the location of the used compilers (A C++ compiler and the aoc/aocl)
 2. Update the board name in the Makefile or give the new board name as an argument 
    to make.
-3. Call make to build the host program together with the kernels or build them 
-   separately by using using the targets 'host' or 'kernel'.
-   The kernel also offers multiple targets to synthesize the kernels without
-   interleaving, with profiling or for emulation.
+3. Build the host program or the kernels by using the available build targets.
+
+For more detailed information about the available build targets call:
+
+    make
+without specifying a target.
+This will print a list of the targets together with a short description.
 
 Similar to the original STREAM benchmark it is also possible to modify the 
 size of the used buffers as well as the number of iterations.
@@ -33,15 +36,6 @@ Example:
 Will build the host and name the binary after the given build suffix.
 So the host would be named 'stream_fpga_18.1.1'.
 The file will be placed in a folder called 'bin' in the root of this project.
-
-For more detailed information about the available build targets call
-
-    make
-or
-
-    make info
-
-This will print a list of the targets together with a short description.
 
 
 ## Execution
