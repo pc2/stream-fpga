@@ -38,6 +38,7 @@ For more detailed information about the available build targets call
 
     make
 or
+
     make info
 
 This will print a list of the targets together with a short description.
