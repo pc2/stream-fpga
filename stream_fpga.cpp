@@ -54,6 +54,10 @@
 
 #include "CL/cl.hpp"
 
+#if (QUARTUS_MAJOR_VERSION >= 19)
+#include <CL/cl_ext_intelfpga.h>
+#endif
+
 /*-----------------------------------------------------------------------
  * INSTRUCTIONS:
  *
