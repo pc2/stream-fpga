@@ -15,6 +15,18 @@ AOC := aoc
 AOCL := aocl
 MKDIR_P := mkdir -p
 
+$(info ***************************)
+$(info Collected information)
+
+# Check Quartus version
+ifndef QUARTUS_VERSION
+    $(error QUARTUS_VERSION not defined! Quartus seems not to be set up correctly)
+else
+    $(info QUARTUS_VERSION     = $(QUARTUS_VERSION))
+endif
+
+QUARTUS_MAJOR_VERSION := $(shell echo $(QUARTUS_VERSION) | cut -d "." -f 1)
+
 # OpenCL compile and link flags.
 AOCL_COMPILE_CONFIG := $(shell $(AOCL) compile-config )
 AOCL_LINK_CONFIG := $(shell $(AOCL) link-config )
@@ -27,6 +39,7 @@ BOARD := p520_hpc_sg280l
 BIN_DIR := bin/
 
 ifdef BUILD_SUFFIX
+    $(info BUILD_SUFFIX        = $(BUILD_SUFFIX))
 	EXT_BUILD_SUFFIX := _$(BUILD_SUFFIX)
 endif
 
@@ -41,16 +54,42 @@ SRCS := stream_fpga.cpp
 TARGET := $(SRCS:.cpp=)$(EXT_BUILD_SUFFIX)
 KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(EXT_BUILD_SUFFIX)
 
-all: host kernel
+$(info BOARD               = $(BOARD))
+$(info TARGET              = $(TARGET))
+$(info KERNEL_TARGET       = $(KERNEL_TARGET).aocx)
+
+$(info ***************************)
+
+default: info
+	$(error No target specified)
+
+info:
+	$(info *************************************************)
+	$(info Please specify one ore more of the listed targets)
+	$(info *************************************************)
+	$(info Host Code:)
+	$(info no_interleave_host           = Host that is trying to put every array on a separate memory bank on the FPGA)
+	$(info host                         = Use memory interleaving to store the arrays on the FPGA)
+	$(info *************************************************)
+	$(info Kernels:)
+	$(info kernel                       = Compile kernels without special flags)
+	$(info emulate_kernel               = Compile kernels for emulation)
+	$(info kernel_profile               = Compile kernels with profiling information enabled)
+	$(info no_interleave_kernel         = Compile kernels without memory interleaving)
+	$(info no_interleave_kernel_profile = Compile kernels without memory interleaving and profiling information enabled)
+	$(info ************************************************)
+	$(info info                         = Print this list of available targets)
+	$(info ************************************************)
 
 host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\"  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
+	$(CXX) -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" \
+		      $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
-no_interleaving_host: 
+no_interleave_host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
-
+	$(CXX)  -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" \
+		      -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
 
 kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
