@@ -55,6 +55,23 @@ This file contains execution results for multiple systems administrated by the P
     FPGA card:  Bittware 520N (Intel Stratix 10)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.1
 
+    Interleaved Memory:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           32597.4     0.024545     0.024542     0.024548
+    Scale:          32602.8     0.024539     0.024538     0.024541
+    Add:            48572.8     0.024708     0.024705     0.024711
+    Triad:          47423.6     0.025308     0.025304     0.025313
+    PCI Write:       6330.3     0.189646     0.189563     0.189759
+    PCI Read:        6315.9     0.190041     0.189998     0.190126
+
+    Non-Interleaved:
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           32642.4     0.024513     0.024508     0.024525
+    Scale:          32659.9     0.024499     0.024495     0.024501
+    Add:            48979.8     0.024502     0.024500     0.024504
+    Triad:          48973.6     0.024504     0.024503     0.024506
+    PCI Write:       6318.7     0.189960     0.189912     0.190026
+    PCI Read:        6413.0     0.187184     0.187119     0.187271
 
 
 4.  System:     FPGA Research Clusters
