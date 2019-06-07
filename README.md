@@ -1,12 +1,12 @@
+# STREAM for FPGA
 
 This repository contains the STREAM benchmark for FPGA and its OpenCL kernels.
-Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utility is supported.
+Currently only the  Intel® FPGA SDK for OpenCL™ utility is supported.
 
 It is a modified implementation of the STREAM benchmark by John D. McCaplin, Ph.D.
-available at https://www.cs.virginia.edu/stream/
+available at [https://www.cs.virginia.edu/stream/](https://www.cs.virginia.edu/stream/).
 
-1. BUILD
-------------
+## Build
 
 Depending on the use case you may want to change certain lines in the
 Makefile:
@@ -36,8 +36,7 @@ stream_fpga_18.1.1
 Both files will be placed in a folder called 'bin' in the root of this project.
 
 
-2. EXECUTION
--------------
+## Execution
 
 The created host uses the kernel with the same build suffix by default.
 It tries to load it from the same directory it is executed in.
@@ -55,18 +54,17 @@ For example to use the kernel 'other.aocx':
 Also, relative and absolute paths to the kernel can be given.
 
 
-3. Output
--------------
+## Result interpretation
 
 The output of the host application is similar to the original STREAM benchmark:
 
-Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           30875.9     0.025914     0.025910     0.025919
-Scale:          30885.6     0.025905     0.025902     0.025911
-Add:            46289.2     0.025928     0.025924     0.025935
-Triad:          45613.4     0.026310     0.026308     0.026312
-PCI Write:       6324.0     0.189800     0.189753     0.189862
-PCI Read:        5587.3     0.214869     0.214773     0.214943
+	Function    Best Rate MB/s  Avg time     Min time     Max time
+	Copy:           30875.9     0.025914     0.025910     0.025919
+	Scale:          30885.6     0.025905     0.025902     0.025911
+	Add:            46289.2     0.025928     0.025924     0.025935
+	Triad:          45613.4     0.026310     0.026308     0.026312
+	PCI Write:       6324.0     0.189800     0.189753     0.189862
+	PCI Read:        5587.3     0.214869     0.214773     0.214943
 
 In addition it also measures the bandwidth of the connection between host and
 device. It is distinguished between writing to and reading from the devices
@@ -74,3 +72,9 @@ memory.
 The buffers are written to the device before every iteration and read back
 after each iteration.
 
+## Exemplary Results 
+
+The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
+The detailed results of the runs are given in [results.txt](results.txt).
+The best achieved data rates for the tested Intel® Quartus® Prime versions:
+![Best data rate results](best_data_rates.jpeg)
