@@ -28,12 +28,19 @@ This suffix will be added to the kernel name after generation.
 
 Example:
 		
-	make BUILD_SUFFIX=18.1.1
+	make host BUILD_SUFFIX=18.1.1
 
-Will build the host and the kernel.
-The kernel will be named stream_kernels_18.1.1 and the host
-stream_fpga_18.1.1
-Both files will be placed in a folder called 'bin' in the root of this project.
+Will build the host and name the binary after the given build suffix.
+So the host would be named 'stream_fpga_18.1.1'.
+The file will be placed in a folder called 'bin' in the root of this project.
+
+For more detailed information about the available build targets call
+
+    make
+or
+    make info
+
+This will print a list of the targets together with a short description.
 
 
 ## Execution
