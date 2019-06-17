@@ -34,7 +34,12 @@ AOCL_LINK_CONFIG := $(shell $(AOCL) link-config )
 KERNEL_SRCS := stream_kernels.cl
 KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
+STREAM_ARRAY_SIZE := 50000000
 BOARD := p520_hpc_sg280l
+STREAM_TYPE := double
+UNROLL_COUNT := 8
+OFFSET := 0
+NTIMES := 10
 
 BIN_DIR := bin/
 
@@ -47,16 +52,24 @@ endif
 # Change aoc params to the ones desired (emulation,simulation,synthesis).
 #
 #AOC_PARAMS := -march=emulator
-AOC_PARAMS := -board=$(BOARD) 
+AOC_PARAMS := -board=$(BOARD) -DSTREAM_TYPE=$(STREAM_TYPE) -DUNROLL_COUNT=$(UNROLL_COUNT)
 
-STREAM_ARRAY_SIZE := 100000000
 SRCS := stream_fpga.cpp
 TARGET := $(SRCS:.cpp=)$(EXT_BUILD_SUFFIX)
 KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(EXT_BUILD_SUFFIX)
 
+COMMON_FLAGS := -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION)
+HOST_FLAGS := -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" -DSTREAM_TYPE=cl_$(STREAM_TYPE) -DOFFSET=$(OFFSET) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DNTIMES=$(NTIMES)
+
+
 $(info BOARD               = $(BOARD))
 $(info TARGET              = $(TARGET))
 $(info KERNEL_TARGET       = $(KERNEL_TARGET).aocx)
+$(info STREAM_ARRAY_SIZE   = $(STREAM_ARRAY_SIZE))
+$(info STREAM_TYPE         = $(STREAM_TYPE))
+$(info UNROLL_COUNT        = $(UNROLL_COUNT))
+$(info NTIMES              = $(NTIMES))
+$(info OFFSET              = $(OFFSET))
 
 $(info ***************************)
 
@@ -83,17 +96,17 @@ info:
 
 host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" \
+	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
 no_interleave_host: 
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX)  -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" \
+	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
 
 kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
 
 emulate_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
@@ -101,15 +114,15 @@ emulate_kernel: $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -profile -o $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -profile -o $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
 
 no_interleave_kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -profile -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -profile -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
 
 no_interleave_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
 
 cleanhost:
 	rm -f $(BIN_DIR)$(TARGET)
