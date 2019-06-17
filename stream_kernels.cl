@@ -1,9 +1,14 @@
+
+#if (QUARTUS_MAJOR_VERSION <= 18)
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#endif
+
 #ifndef STREAM_TYPE
-#define STREAM_TYPE float
+#define STREAM_TYPE double
 #endif
 
 #ifndef UNROLL_COUNT
-#define UNROLL_COUNT 16
+#define UNROLL_COUNT 8
 #endif
 
 __kernel
