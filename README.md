@@ -14,7 +14,9 @@ Makefile:
 1. Check the location of the used compilers (A C++ compiler and the aoc/aocl)
 2. Update the board name in the Makefile or give the new board name as an argument 
    to make.
-3. Build the host program or the kernels by using the available build targets.
+3. Set the used data type using the STREAM_TYPE variable and the number the for
+   loops in the kernels should be unrolled with UNROLL_COUNT.
+4. Build the host program or the kernels by using the available build targets.
 
 For more detailed information about the available build targets call:
 
@@ -23,7 +25,8 @@ without specifying a target.
 This will print a list of the targets together with a short description.
 
 Similar to the original STREAM benchmark it is also possible to modify the 
-size of the used buffers as well as the number of iterations.
+size of the used buffers as well as the number of iterations with the variables
+STREAM_ARRAY_SIZE and NTIMES.
 
 To make it easier to generate different versions of the kernels, it
 is possible to specify a variable BUILD_SUFFIX when executing make.
