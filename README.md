@@ -81,5 +81,7 @@ after each iteration.
 
 The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
 The detailed results of the runs are given in [results.txt](results.txt).
-The best achieved data rates for the tested Intel® Quartus® Prime versions:
+The best achieved data rates with single precision for the tested Intel® Quartus® Prime versions:
 ![Best data rate results](best_data_rates.jpeg)
+Results for double precision:
+![Best data rate results](best_data_rates_dp.jpeg)
