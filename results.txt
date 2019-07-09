@@ -2,7 +2,7 @@ This file contains execution results for multiple systems administrated by the P
 
 1.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.0.1
 
     Interleaved Memory:
@@ -27,7 +27,7 @@ This file contains execution results for multiple systems administrated by the P
 
 2.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.1.1
 
     Interleaved Memory:
@@ -52,7 +52,7 @@ This file contains execution results for multiple systems administrated by the P
 
 3.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.1
 
     Interleaved Memory:
@@ -76,7 +76,7 @@ This file contains execution results for multiple systems administrated by the P
 
 4.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
-    FPGA:       proFPGA A10 GX1150 (Intel Aria 10)
+    FPGA:       Bittware 385A (Intel Aria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
 
     Interleaved Memory:
