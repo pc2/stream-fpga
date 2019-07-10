@@ -1,14 +1,18 @@
 This file contains execution results for multiple systems administrated by the Paderborn Center for Parallel Computing (PC2) (https://pc2.upb.de).
+Frequencies are given in MHz. fMax are retrieved from the AOC report.
 
 Results for Single Precision
 =============================
+The following environment variables where set for the kernel file:
+UNROLL_COUNT=16 
 
 1.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.0.1
 
     Interleaved Memory:
+    fMax=276.77
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           35130.7     0.022776     0.022772     0.022782
     Scale:          35138.5     0.022771     0.022767     0.022776
@@ -18,6 +22,7 @@ Results for Single Precision
     PCI Read:        3673.8     0.326716     0.326636     0.326799
 
     Non-Interleaved:
+    fMax=372.16
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           31992.3     0.025015     0.025006     0.025025
     Scale:          32020.6     0.024990     0.024984     0.024997
@@ -30,10 +35,11 @@ Results for Single Precision
 
 2.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.1.1
 
     Interleaved Memory:
+    fMax=242.18
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           30875.9     0.025914     0.025910     0.025919
     Scale:          30885.6     0.025905     0.025902     0.025911
@@ -43,6 +49,7 @@ Results for Single Precision
     PCI Read:        5587.3     0.214869     0.214773     0.214943
 
     Non-Interleaved:
+    fMax=328.125
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           31767.5     0.025188     0.025183     0.025196
     Scale:          31777.7     0.025177     0.025175     0.025181
@@ -55,10 +62,11 @@ Results for Single Precision
 
 3.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.1
 
     Interleaved Memory:
+    fMax=255.68
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           32597.4     0.024545     0.024542     0.024548
     Scale:          32602.8     0.024539     0.024538     0.024541
@@ -68,6 +76,7 @@ Results for Single Precision
     PCI Read:        6315.9     0.190041     0.189998     0.190126
 
     Non-Interleaved:
+    fMax=342.93
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           32642.4     0.024513     0.024508     0.024525
     Scale:          32659.9     0.024499     0.024495     0.024501
@@ -79,10 +88,11 @@ Results for Single Precision
 
 4.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
-    FPGA:       proFPGA A10 GX1150 (Intel Aria 10)
+    FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
 
     Interleaved Memory:
+    fMax=341.06
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           26767.5     0.029892     0.029887     0.029901
     Scale:          27112.3     0.029562     0.029507     0.029594
@@ -92,6 +102,7 @@ Results for Single Precision
     PCI Read:        6356.5     0.192998     0.188783     0.196114
 
     Non-Interleaved:
+    fMax=342.93
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           15553.6     0.051469     0.051435     0.051553
     Scale:          32581.2     0.024617     0.024554     0.024661
@@ -102,13 +113,15 @@ Results for Single Precision
 
 Results for Double Precision
 =============================
+UNROLL_COUNT=8 for all kernels
 
 1.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.0.1
 
     Interleaved Memory:
+    fMax=251.06
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           31938.7     0.025057     0.025048     0.025069
     Scale:          31946.3     0.025047     0.025042     0.025058
@@ -118,6 +131,7 @@ Results for Double Precision
     PCI Read:        3531.8     0.339810     0.339775     0.339877
 
     Non-Interleaved:
+    fMax=348.79
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           31119.9     0.025712     0.025707     0.025716
     Scale:          31213.4     0.025640     0.025630     0.025652
@@ -130,10 +144,11 @@ Results for Double Precision
 
 2.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 18.1.1
 
     Interleaved Memory:
+    fMax=260.82
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           33218.3     0.024086     0.024083     0.024092
     Scale:          33226.8     0.024080     0.024077     0.024085
@@ -143,6 +158,7 @@ Results for Double Precision
     PCI Read:        5397.1     0.222387     0.222343     0.222454
 
     Non-Interleaved:
+    fMax=338.63
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           32108.0     0.024926     0.024916     0.024937
     Scale:          32122.1     0.024912     0.024905     0.024925
@@ -155,10 +171,11 @@ Results for Double Precision
 
 3.  System:     Noctua
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
-    FPGA card:  Bittware 520N (Intel Stratix 10)
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.1
 
     Interleaved Memory:
+    fMax=266.8
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           34084.4     0.023472     0.023471     0.023474
     Scale:          34092.1     0.023467     0.023466     0.023468
@@ -168,6 +185,7 @@ Results for Double Precision
     PCI Read:        6308.9     0.190234     0.190206     0.190309
 
     Non-Interleaved:
+    fMax=372.02
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           32682.5     0.024480     0.024478     0.024483
     Scale:          32694.6     0.024470     0.024469     0.024470
@@ -179,10 +197,12 @@ Results for Double Precision
 
 4.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
-    FPGA:       proFPGA A10 GX1150 (Intel Aria 10)
+    FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
+    fMax:
 
     Interleaved Memory:
+    fMax=315.85
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           26711.3     0.029969     0.029950     0.030000
     Scale:          26987.8     0.029729     0.029643     0.029777
@@ -192,6 +212,7 @@ Results for Double Precision
     PCI Read:        6391.9     0.192733     0.187739     0.196223
 
     Non-Interleaved:
+    fMax=318.16
     Function    Best Rate MB/s  Avg time     Min time     Max time
     Copy:           15612.5     0.051260     0.051241     0.051291
     Scale:          32520.3     0.024654     0.024600     0.024689
