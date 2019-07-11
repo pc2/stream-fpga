@@ -114,7 +114,7 @@ emulate_kernel: $(KERNEL_SRCS)
 
 kernel_report: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -report -rtl -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
+	$(AOC) $(AOC_PARAMS) -report -rtl -o $(BIN_DIR)$(KERNEL_TARGET)_report $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
