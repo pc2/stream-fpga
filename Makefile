@@ -5,7 +5,7 @@
 #
 #  This makefile compiles the STREAM benchmark for FPGA and its OpenCL kernels.
 #  Currently only the  Intel(R) FPGA SDK for OpenCL(TM) utitlity is supported.
-#  
+#
 #  Please read the README contained in this folder for more information and
 #  instructions how to compile and execute the benchmark.
 
@@ -35,9 +35,9 @@ KERNEL_SRCS := stream_kernels.cl
 KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
 STREAM_ARRAY_SIZE := 50000000
-BOARD := p520_hpc_sg280l
+BOARD := p520_max_sg280l
 STREAM_TYPE := double
-UNROLL_COUNT := 8
+UNROLL_COUNT := 16
 OFFSET := 0
 NTIMES := 10
 
@@ -94,12 +94,12 @@ info:
 	$(info info                         = Print this list of available targets)
 	$(info ************************************************)
 
-host: 
+host:
 	$(MKDIR_P) $(BIN_DIR)
 	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
-no_interleave_host: 
+no_interleave_host:
 	$(MKDIR_P) $(BIN_DIR)
 	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
@@ -111,6 +111,10 @@ kernel: $(KERNEL_SRCS)
 emulate_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
 	$(AOC) $(AOC_PARAMS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
+
+kernel_report: $(KERNEL_SRCS)
+	$(MKDIR_P) $(BIN_DIR)
+	$(AOC) $(AOC_PARAMS) -report -rtl -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
