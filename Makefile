@@ -37,7 +37,7 @@ KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 STREAM_ARRAY_SIZE := 50000000
 BOARD := p520_max_sg280l
 STREAM_TYPE := double
-UNROLL_COUNT := 16
+UNROLL_COUNT := 8
 OFFSET := 0
 NTIMES := 10
 
@@ -87,9 +87,12 @@ info:
 	$(info Kernels:)
 	$(info kernel                       = Compile kernels without special flags)
 	$(info emulate_kernel               = Compile kernels for emulation)
+	$(info kernel_report                = Generate report for kernels)
 	$(info kernel_profile               = Compile kernels with profiling information enabled)
 	$(info no_interleave_kernel         = Compile kernels without memory interleaving)
 	$(info no_interleave_kernel_profile = Compile kernels without memory interleaving and profiling information enabled)
+	$(info ************************************************)
+	$(info run_emu                		= Build and run emulation kernels and host code)
 	$(info ************************************************)
 	$(info info                         = Print this list of available targets)
 	$(info ************************************************)
@@ -127,6 +130,11 @@ no_interleave_kernel_profile: $(KERNEL_SRCS)
 no_interleave_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
 	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
+
+run_emu: emulate_kernel host
+	-unlink bin/stream_kernels.aocx
+	-ln -s stream_kernels_emulate.aocx bin/stream_kernels.aocx
+	cd bin && CL_CONTEXT_EMULATOR_DEVICE_INTELFPGA=1 ./stream_fpga
 
 cleanhost:
 	rm -f $(BIN_DIR)$(TARGET)
