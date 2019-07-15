@@ -77,6 +77,18 @@ memory.
 The buffers are written to the device before every iteration and read back
 after each iteration.
 
+## Different Kernel Source Files
+
+The repository contains two OpenCL files with implementations of the STREAM kernels.
+`stream_kernels.cl` is using only the unrolling pragma without specific code optimizations.
+`stream_kernels_vec.cl` is making use of the OpenCL vector types. Moreover, it is optimized for 
+boards with 4 or more banks by manually unrolling the scale and copy kernel.
+To synthesize the kernels from other files, the kernel source file can be given with `KERNEL_SRCS`
+For synthesizing the vector type version run:
+
+	make kernel KERNEL_SRCS=stream_kernels_vec.cl
+
+
 ## Exemplary Results 
 
 The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
