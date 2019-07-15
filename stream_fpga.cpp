@@ -186,7 +186,7 @@
 #endif
 
 #ifndef STREAM_TYPE
-#define STREAM_TYPE cl_float
+#define STREAM_TYPE cl_double
 #endif
 
 #define STREAM_COPY_KERNEL "copy"

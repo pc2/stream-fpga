@@ -10,17 +10,17 @@
 #  instructions how to compile and execute the benchmark.
 
 # Used compilers for C code and OpenCL kernels
-CXX := g++ --std=c++11
+CXX := g++
 AOC := aoc
 AOCL := aocl
 MKDIR_P := mkdir -p
 
 $(info ***************************)
-$(info Collected information)
+$(info Collected information:)
 
 # Check Quartus version
 ifndef QUARTUS_VERSION
-    $(error QUARTUS_VERSION not defined! Quartus seems not to be set up correctly)
+    $(error QUARTUS_VERSION not defined! Please set this variable to the targeted Quartus version.)
 else
     $(info QUARTUS_VERSION     = $(QUARTUS_VERSION))
 endif
@@ -30,9 +30,6 @@ QUARTUS_MAJOR_VERSION := $(shell echo $(QUARTUS_VERSION) | cut -d "." -f 1)
 # OpenCL compile and link flags.
 AOCL_COMPILE_CONFIG := $(shell $(AOCL) compile-config )
 AOCL_LINK_CONFIG := $(shell $(AOCL) link-config )
-
-KERNEL_SRCS := stream_kernels.cl
-KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
 STREAM_ARRAY_SIZE := 50000000
 BOARD := p520_max_sg280l
@@ -48,11 +45,11 @@ ifdef BUILD_SUFFIX
 	EXT_BUILD_SUFFIX := _$(BUILD_SUFFIX)
 endif
 
-##
-# Change aoc params to the ones desired (emulation,simulation,synthesis).
-#
-#AOC_PARAMS := -march=emulator
-AOC_PARAMS := -board=$(BOARD) -DSTREAM_TYPE=$(STREAM_TYPE) -DUNROLL_COUNT=$(UNROLL_COUNT)
+ALL_AOC_FLAGS := $(AOC_FLAGS) -board=$(BOARD) -DSTREAM_TYPE=$(STREAM_TYPE) -DUNROLL_COUNT=$(UNROLL_COUNT)
+CXX_FLAGS = --std=c++11
+
+KERNEL_SRCS := stream_kernels.cl
+KERNEL_INPUTS = $(KERNEL_SRCS:.cl=.aocx)
 
 SRCS := stream_fpga.cpp
 TARGET := $(SRCS:.cpp=)$(EXT_BUILD_SUFFIX)
@@ -63,14 +60,16 @@ HOST_FLAGS := -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" -DSTREAM_TYPE=cl_$(
 
 
 $(info BOARD               = $(BOARD))
-$(info TARGET              = $(TARGET))
-$(info KERNEL_TARGET       = $(KERNEL_TARGET).aocx)
+$(info SRCS                = $(SRCS))
+$(info KERNEL_SRCS         = $(KERNEL_SRCS))
 $(info STREAM_ARRAY_SIZE   = $(STREAM_ARRAY_SIZE))
 $(info STREAM_TYPE         = $(STREAM_TYPE))
 $(info UNROLL_COUNT        = $(UNROLL_COUNT))
 $(info NTIMES              = $(NTIMES))
 $(info OFFSET              = $(OFFSET))
-
+ifdef AOC_FLAGS
+$(info AOC_FLAGS           = $(AOC_FLAGS))
+endif
 $(info ***************************)
 
 default: info
@@ -86,7 +85,7 @@ info:
 	$(info *************************************************)
 	$(info Kernels:)
 	$(info kernel                       = Compile kernels without special flags)
-	$(info emulate_kernel               = Compile kernels for emulation)
+	$(info kernel_emulate               = Compile kernels for emulation)
 	$(info kernel_report                = Generate report for kernels)
 	$(info kernel_profile               = Compile kernels with profiling information enabled)
 	$(info no_interleave_kernel         = Compile kernels without memory interleaving)
@@ -99,42 +98,40 @@ info:
 
 host:
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
+	$(CXX) $(CXX_FLAGS) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)
 
 no_interleave_host:
 	$(MKDIR_P) $(BIN_DIR)
-	$(CXX) $(COMMON_FLAGS) $(HOST_FLAGS) \
+	$(CXX) $(CXX_FLAGS) $(COMMON_FLAGS) $(HOST_FLAGS) \
 		      -DNO_INTERLEAVING  $(AOCL_COMPILE_CONFIG) $(SRCS) $(AOCL_LINK_CONFIG) -o $(BIN_DIR)$(TARGET)_no_interleaving
 
 kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) $(COMMON_FLAGS) -o $(BIN_DIR)$(KERNEL_TARGET) $(KERNEL_SRCS)
 
-emulate_kernel: $(KERNEL_SRCS)
+kernel_emulate: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) -march=emulator -o $(BIN_DIR)$(KERNEL_TARGET)_emulate $(KERNEL_SRCS)
 
 kernel_report: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) -report -rtl -o $(BIN_DIR)$(KERNEL_TARGET)_report $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) -report -rtl -o $(BIN_DIR)$(KERNEL_TARGET)_report $(KERNEL_SRCS)
 
 kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -profile -o $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) $(COMMON_FLAGS) -profile -o $(BIN_DIR)$(KERNEL_TARGET)_profile $(KERNEL_SRCS)
 
 no_interleave_kernel_profile: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -profile -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) $(COMMON_FLAGS) -profile -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_profile_no_interleaving $(KERNEL_SRCS)
 
 no_interleave_kernel: $(KERNEL_SRCS)
 	$(MKDIR_P) $(BIN_DIR)
-	$(AOC) $(AOC_PARAMS) $(COMMON_FLAGS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
+	$(AOC) $(ALL_AOC_FLAGS) $(COMMON_FLAGS) -no-interleaving=default -o $(BIN_DIR)$(KERNEL_TARGET)_no_interleaving $(KERNEL_SRCS)
 
-run_emu: emulate_kernel host
-	-unlink bin/stream_kernels.aocx
-	-ln -s stream_kernels_emulate.aocx bin/stream_kernels.aocx
-	cd bin && CL_CONTEXT_EMULATOR_DEVICE_INTELFPGA=1 ./stream_fpga
+run_emu: kernel_emulate host
+	cd bin && CL_CONTEXT_EMULATOR_DEVICE_INTELFPGA=1 ./$(TARGET) $(KERNEL_TARGET)_emulate.aocx
 
 cleanhost:
 	rm -f $(BIN_DIR)$(TARGET)
