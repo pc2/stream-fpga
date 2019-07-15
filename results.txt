@@ -199,7 +199,6 @@ UNROLL_COUNT=8 for all kernels
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
-    fMax:
 
     Interleaved Memory:
     fMax=315.85
