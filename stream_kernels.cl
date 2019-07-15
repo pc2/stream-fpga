@@ -38,7 +38,7 @@ void add(__global const STREAM_TYPE * restrict in1,
 }
 
 __kernel
-void scalar(__global const STREAM_TYPE * restrict in,
+void scale(__global const STREAM_TYPE * restrict in,
           __global STREAM_TYPE * restrict out,
           STREAM_TYPE scalar,
           uint array_size) {

@@ -190,7 +190,7 @@
 #endif
 
 #define STREAM_COPY_KERNEL "copy"
-#define STREAM_SCALAR_KERNEL "scalar"
+#define STREAM_SCALE_KERNEL "scale"
 #define STREAM_ADD_KERNEL "add"
 #define STREAM_TRIAD_KERNEL "triad"
 
@@ -331,11 +331,11 @@ int main(int argc, char * argv[])
 	cl::Program program(streamcontext, DeviceList, mybinaries);
 
 	// create the kernels
-    cl::Kernel testkernel(program, STREAM_SCALAR_KERNEL, &err);
+    cl::Kernel testkernel(program, STREAM_SCALE_KERNEL, &err);
     assert(err==CL_SUCCESS);
     cl::Kernel copykernel(program, STREAM_COPY_KERNEL, &err);
 	assert(err==CL_SUCCESS);
-	cl::Kernel scalarkernel(program, STREAM_SCALAR_KERNEL, &err);
+	cl::Kernel scalekernel(program, STREAM_SCALE_KERNEL, &err);
 	assert(err==CL_SUCCESS);
 	cl::Kernel addkernel(program, STREAM_ADD_KERNEL, &err);
 	assert(err==CL_SUCCESS);
@@ -360,14 +360,14 @@ int main(int argc, char * argv[])
 	assert(err==CL_SUCCESS);
 	err = copykernel.setArg(2, STREAM_ARRAY_SIZE);
 	assert(err==CL_SUCCESS);
-	//set arguments of scalar kernel
-	err = scalarkernel.setArg(0, Buffer_C);
+	//set arguments of scale kernel
+	err = scalekernel.setArg(0, Buffer_C);
 	assert(err==CL_SUCCESS);
-	err = scalarkernel.setArg(1, Buffer_B);
+	err = scalekernel.setArg(1, Buffer_B);
 	assert(err==CL_SUCCESS);
-	err = scalarkernel.setArg(2, scalar);
+	err = scalekernel.setArg(2, scalar);
 	assert(err==CL_SUCCESS);
-	err = scalarkernel.setArg(3, STREAM_ARRAY_SIZE);
+	err = scalekernel.setArg(3, STREAM_ARRAY_SIZE);
 	assert(err==CL_SUCCESS);
 	//set arguments of add kernel
 	err = addkernel.setArg(0, Buffer_A);
@@ -448,7 +448,7 @@ int main(int argc, char * argv[])
 		assert(err==CL_SUCCESS);
 		
 		times[1][k] = mysecond();
-		streamqueue.enqueueTask(scalarkernel, NULL, &e);
+		streamqueue.enqueueTask(scalekernel, NULL, &e);
 		err=e.wait();
 		times[1][k] = mysecond() - times[1][k];
 		assert(err==CL_SUCCESS);

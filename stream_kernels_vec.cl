@@ -50,7 +50,7 @@ void add(__global const VEC_TYPE * restrict in1,
 }
 
 __kernel
-void scalar(__global const VEC_TYPE * restrict in,
+void scale(__global const VEC_TYPE * restrict in,
           __global VEC_TYPE * restrict out,
           STREAM_TYPE scalar,
           uint array_size) {
