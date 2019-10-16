@@ -10,13 +10,15 @@ available at [https://www.cs.virginia.edu/stream/](https://www.cs.virginia.edu/s
 
 Depending on the use case you may want to change certain lines in the
 Makefile:
-     
+
 1. Check the location of the used compilers (A C++ compiler and the aoc/aocl)
-2. Update the board name in the Makefile or give the new board name as an argument 
+2. Update the board name in the Makefile or give the new board name as an argument
    to make.
 3. Set the used data type using the STREAM_TYPE variable and the number the for
    loops in the kernels should be unrolled with UNROLL_COUNT.
-4. Build the host program or the kernels by using the available build targets.
+4. Set the OpenCL specific flags PLATFORM_ID and DEVICE_ID to the use the desired
+   FPGA device. For more information look into the `stream_fpga.cpp`
+5. Build the host program or the kernels by using the available build targets.
 
 For more detailed information about the available build targets call:
 
@@ -24,7 +26,7 @@ For more detailed information about the available build targets call:
 without specifying a target.
 This will print a list of the targets together with a short description.
 
-Similar to the original STREAM benchmark it is also possible to modify the 
+Similar to the original STREAM benchmark it is also possible to modify the
 size of the used buffers as well as the number of iterations with the variables
 STREAM_ARRAY_SIZE and NTIMES.
 
@@ -33,7 +35,7 @@ is possible to specify a variable BUILD_SUFFIX when executing make.
 This suffix will be added to the kernel name after generation.
 
 Example:
-		
+
 	make host BUILD_SUFFIX=18.1.1
 
 Will build the host and name the binary after the given build suffix.
@@ -45,8 +47,8 @@ The file will be placed in a folder called 'bin' in the root of this project.
 
 The created host uses the kernel with the same build suffix by default.
 It tries to load it from the same directory it is executed in.
-   
-    ./stream_fpga_18.1.1 
+
+    ./stream_fpga_18.1.1
 
 will try to load the kernel file with the name
 stream_kernels_18.1.1.aocx by default.
@@ -81,7 +83,7 @@ after each iteration.
 
 The repository contains two OpenCL files with implementations of the STREAM kernels.
 `stream_kernels.cl` is using only the unrolling pragma without specific code optimizations.
-`stream_kernels_vec.cl` is making use of the OpenCL vector types. Moreover, it is optimized for 
+`stream_kernels_vec.cl` is making use of the OpenCL vector types. Moreover, it is optimized for
 boards with 4 or more banks by manually unrolling the scale and copy kernel.
 To synthesize the kernels from other files, the kernel source file can be given with `KERNEL_SRCS`
 For synthesizing the vector type version run:
@@ -89,7 +91,7 @@ For synthesizing the vector type version run:
 	make kernel KERNEL_SRCS=stream_kernels_vec.cl
 
 
-## Exemplary Results 
+## Exemplary Results
 
 The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
 The detailed results of the runs are given in [results.txt](results.txt).
