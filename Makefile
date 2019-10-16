@@ -37,6 +37,8 @@ STREAM_TYPE := double
 UNROLL_COUNT := 8
 OFFSET := 0
 NTIMES := 10
+PLATFORM_ID := 2
+DEVICE_ID := 0
 
 BIN_DIR := bin/
 
@@ -56,7 +58,10 @@ TARGET := $(SRCS:.cpp=)$(EXT_BUILD_SUFFIX)
 KERNEL_TARGET := $(KERNEL_SRCS:.cl=)$(EXT_BUILD_SUFFIX)
 
 COMMON_FLAGS := -DQUARTUS_MAJOR_VERSION=$(QUARTUS_MAJOR_VERSION)
-HOST_FLAGS := -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" -DSTREAM_TYPE=cl_$(STREAM_TYPE) -DOFFSET=$(OFFSET) -DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DNTIMES=$(NTIMES)
+HOST_FLAGS := -DSTREAM_FPGA_KERNEL=\"$(KERNEL_TARGET).aocx\" \
+			-DSTREAM_TYPE=cl_$(STREAM_TYPE) -DOFFSET=$(OFFSET) \
+			-DSTREAM_ARRAY_SIZE=$(STREAM_ARRAY_SIZE) -DNTIMES=$(NTIMES) \
+			-DPLATFORM_ID=$(PLATFORM_ID) -DDEVICE_ID=$(DEVICE_ID)
 
 
 $(info BOARD               = $(BOARD))
@@ -67,9 +72,10 @@ $(info STREAM_TYPE         = $(STREAM_TYPE))
 $(info UNROLL_COUNT        = $(UNROLL_COUNT))
 $(info NTIMES              = $(NTIMES))
 $(info OFFSET              = $(OFFSET))
-ifdef AOC_FLAGS
 $(info AOC_FLAGS           = $(AOC_FLAGS))
-endif
+$(info CXX_FLAGS           = $(CXX_FLAGS))
+$(info PLATFORM_ID         = $(PLATFORM_ID))
+$(info DEVICE_ID           = $(DEVICE_ID))
 $(info ***************************)
 
 default: info
