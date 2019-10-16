@@ -86,7 +86,28 @@ UNROLL_COUNT=16
     PCI Read:        6413.0     0.187184     0.187119     0.187271
 
 
-4.  System:     FPGA Research Clusters
+
+4.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.2.0_hpc
+
+    Interleaved Memory:
+    fMax=269.68
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           34349.6     0.023293     0.023290     0.023298
+    Scale:          34358.1     0.023286     0.023284     0.023288
+    Add:            50335.7     0.023842     0.023840     0.023843
+    Triad:          48650.3     0.024668     0.024666     0.024671
+    PCI Write:       6310.6     0.190267     0.190155     0.190397
+    PCI Read:        6306.2     0.190343     0.190289     0.190388
+
+    Non-Interleaved:
+    fMax=
+
+
+
+5.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
@@ -195,7 +216,28 @@ UNROLL_COUNT=8 for all kernels
     PCI Read:        6412.5     0.187189     0.187134     0.187254
 
 
-4.  System:     FPGA Research Clusters
+
+4.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.2.0_hpc
+
+    Interleaved Memory:
+    fMax=243.96
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           31178.0     0.051322     0.051318     0.051338
+    Scale:          31182.4     0.051312     0.051311     0.051315
+    Add:            46775.5     0.051310     0.051309     0.051311
+    Triad:          46751.6     0.051338     0.051335     0.051341
+    PCI Write:       6313.8     0.380221     0.380117     0.380315
+    PCI Read:        6308.4     0.380464     0.380444     0.380494
+
+    Non-Interleaved:
+    fMax=
+
+
+
+5.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
