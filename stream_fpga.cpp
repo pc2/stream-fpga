@@ -329,6 +329,7 @@ int main(int argc, char * argv[])
 
     // Create the Program from the AOCX file.
     cl::Program program(streamcontext, DeviceList, mybinaries);
+    program.build();
 
     // create the kernels
     cl::Kernel testkernel(program, STREAM_SCALE_KERNEL, &err);
