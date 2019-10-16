@@ -127,6 +127,23 @@
 #   define OFFSET	0
 #endif
 
+/* 3) For the access of the FPGA, additional flags are provided in the following.
+*       a) PLATFORM_ID defines the ID of the target platform. It is possible that
+*           there are multiple OpenCL platforms available. The benchmark will
+*           retrieve a list of these platforms and choose the one on the index
+*           PLATFORM_ID
+*       b) DEVICE_ID defines the ID of the target device. Every platform can
+*           contain multiple devices. The STREAM benchmark is supports only the
+*           execution on a single device. Similar to the platform it has to be
+*           set to the index of the target device.
+*/
+#ifndef PLATFORM_ID
+#define PLATFORM_ID 2
+#endif
+#ifndef DEVICE_ID
+#define DEVICE_ID 0
+#endif
+
 /*
  *	3) Compile the code with optimization.  Many compilers generate
  *       unreasonably bad code before the optimizer tightens things up.
@@ -273,19 +290,19 @@ int main(int argc, char * argv[])
     err = cl::Platform::get(&PlatformList);
     assert(err==CL_SUCCESS);
 
-    cl::Platform platform = PlatformList[0];
+    cl::Platform platform = PlatformList[PLATFORM_ID];
     std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
 
     //Setup Device
     //Get Device ID
     std::vector<cl::Device> DeviceList;
-    err = PlatformList[0].getDevices(CL_DEVICE_TYPE_ACCELERATOR, &DeviceList);
+    err = PlatformList[PLATFORM_ID].getDevices(CL_DEVICE_TYPE_ACCELERATOR, &DeviceList);
     assert(err==CL_SUCCESS);
 
     //Create Context
     cl::Context streamcontext(DeviceList);
     assert(err==CL_SUCCESS);
-    std::cout << "Device Name:   " << DeviceList[0].getInfo<CL_DEVICE_NAME>() << std::endl;
+    std::cout << "Device Name:   " << DeviceList[DEVICE_ID].getInfo<CL_DEVICE_NAME>() << std::endl;
     //Create Command queue
     cl::CommandQueue streamqueue(streamcontext, DeviceList[0]);
     assert(err==CL_SUCCESS);
@@ -325,10 +342,11 @@ int main(int argc, char * argv[])
 
     cl::Program::Binaries mybinaries;
     mybinaries.push_back({buf, file_size});
-    DeviceList.resize(1);
+    std::vector<cl::Device> usedDevice;
+    usedDevice.push_back(DeviceList[DEVICE_ID]);
 
     // Create the Program from the AOCX file.
-    cl::Program program(streamcontext, DeviceList, mybinaries);
+    cl::Program program(streamcontext, usedDevice, mybinaries);
     program.build();
 
     // create the kernels
