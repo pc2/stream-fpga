@@ -11,3 +11,4 @@
 #binaries and tmp folders
 stream_fpga
 stream_kernels
+bin/*
