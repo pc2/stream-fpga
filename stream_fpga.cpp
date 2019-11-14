@@ -52,6 +52,7 @@
 #include <float.h>
 #include <unistd.h>
 
+#include "CL/opencl.h"
 #include "CL/cl.hpp"
 
 #if (QUARTUS_MAJOR_VERSION >= 19)
@@ -229,9 +230,9 @@ static double	bytes[6] = {
 //Inputs and Outputs to Kernel, X and Y are inputs, Z is output
 //The aligned attribute is used to ensure alignment
 //so that DMA could be used if we were working with a real FPGA board
-static STREAM_TYPE A[STREAM_ARRAY_SIZE]  __attribute__ ((aligned (64)));
-static STREAM_TYPE B[STREAM_ARRAY_SIZE]  __attribute__ ((aligned (64)));
-static STREAM_TYPE C[STREAM_ARRAY_SIZE]  __attribute__ ((aligned (64)));
+STREAM_TYPE* A;
+STREAM_TYPE* B;
+STREAM_TYPE* C;
 
 extern double mysecond();
 extern void checkSTREAMresults();
@@ -275,13 +276,6 @@ int main(int argc, char * argv[])
     printf(" will be used to compute the reported bandwidth.\n");
     printf(HLINE);
 
-    //Allocates memory with value from 0 to 1000
-    for (int j=0; j<STREAM_ARRAY_SIZE; j++) {
-        A[j] = 1.0;
-        B[j] = 2.0;
-        C[j] = 0.0;
-    }
-
     int err;
 // Setting up OpenCL for FPGA
     //Setup Platform
@@ -307,17 +301,22 @@ int main(int argc, char * argv[])
     cl::CommandQueue streamqueue(streamcontext, DeviceList[0]);
     assert(err==CL_SUCCESS);
 
-#ifdef NO_INTERLEAVING
-    //Create Buffers for input and output
-    cl::Buffer Buffer_A(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_1_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-    cl::Buffer Buffer_B(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_2_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-    cl::Buffer Buffer_C(streamcontext, CL_MEM_READ_WRITE | CL_CHANNEL_3_INTELFPGA, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-#else
-    //Create Buffers for input and output
-    cl::Buffer Buffer_A(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-    cl::Buffer Buffer_B(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-    cl::Buffer Buffer_C(streamcontext, CL_MEM_READ_WRITE, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE);
-#endif
+    // Initalize SVM for Buffers
+    A = reinterpret_cast<STREAM_TYPE*>(
+                            clSVMAlloc(streamcontext(), 0 ,
+                            sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 1024));
+    B = reinterpret_cast<STREAM_TYPE*>(
+                            clSVMAlloc(streamcontext(), 0 ,
+                            sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 1024));
+    B = reinterpret_cast<STREAM_TYPE*>(
+                            clSVMAlloc(streamcontext(), 0 ,
+                            sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 1024));
+
+    for (int j=0; j<STREAM_ARRAY_SIZE; j++) {
+        A[j] = 1.0;
+        B[j] = 2.0;
+        C[j] = 0.0;
+    }
 
     //Read in binaries from file
     char* used_kernel = (char*) STREAM_FPGA_KERNEL;
@@ -347,7 +346,6 @@ int main(int argc, char * argv[])
 
     // Create the Program from the AOCX file.
     cl::Program program(streamcontext, usedDevice, mybinaries);
-    program.build();
 
     // create the kernels
     cl::Kernel testkernel(program, STREAM_SCALE_KERNEL, &err);
@@ -364,45 +362,56 @@ int main(int argc, char * argv[])
     scalar = 3.0;
     test_scalar = 2.0E0;
     //prepare kernels
-    err = testkernel.setArg(0, Buffer_A);
+    err = clSetKernelArgSVMPointerAltera(testkernel(), 0,
+                                        reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = testkernel.setArg(1, Buffer_A);
+    err = clSetKernelArgSVMPointerAltera(testkernel(), 1,
+                                        reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
     err = testkernel.setArg(2, test_scalar);
     assert(err==CL_SUCCESS);
     err = testkernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of copy kernel
-    err = copykernel.setArg(0, Buffer_A);
+    err = clSetKernelArgSVMPointerAltera(copykernel(), 0,
+                                        reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = copykernel.setArg(1, Buffer_C);
-    assert(err==CL_SUCCESS);
+    err = clSetKernelArgSVMPointerAltera(copykernel(), 1,
+                                        reinterpret_cast<void*>(C));
     err = copykernel.setArg(2, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of scale kernel
-    err = scalekernel.setArg(0, Buffer_C);
+    err = clSetKernelArgSVMPointerAltera(scalekernel(), 0,
+                                        reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
-    err = scalekernel.setArg(1, Buffer_B);
+    err = clSetKernelArgSVMPointerAltera(scalekernel(), 1,
+                                        reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
     err = scalekernel.setArg(2, scalar);
     assert(err==CL_SUCCESS);
     err = scalekernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of add kernel
-    err = addkernel.setArg(0, Buffer_A);
+    err = clSetKernelArgSVMPointerAltera(addkernel(), 0,
+                                        reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = addkernel.setArg(1, Buffer_B);
+    err = clSetKernelArgSVMPointerAltera(addkernel(), 1,
+                                        reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
-    err = addkernel.setArg(2, Buffer_C);
+    err = clSetKernelArgSVMPointerAltera(addkernel(), 2,
+                                        reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
     err = addkernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of triad kernel
-    err = triadkernel.setArg(0, Buffer_B);
+    err = clSetKernelArgSVMPointerAltera(triadkernel(), 0,
+                                        reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
-    err = triadkernel.setArg(1, Buffer_C);
+    err = clSetKernelArgSVMPointerAltera(triadkernel(), 1,
+                                        reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
-    err = triadkernel.setArg(2, Buffer_A);
+    err = clSetKernelArgSVMPointerAltera(triadkernel(), 2,
+                                        reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
     err = triadkernel.setArg(3, scalar);
     assert(err==CL_SUCCESS);
@@ -421,8 +430,12 @@ int main(int argc, char * argv[])
     quantum = 1;
     }
 
-    streamqueue.enqueueWriteBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-    streamqueue.finish();
+    err = clEnqueueSVMMap(streamqueue(), CL_TRUE,
+                            CL_MAP_READ | CL_MAP_WRITE,
+                            reinterpret_cast<void *>(A),
+                            sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 0,
+                            NULL, NULL);
+    assert(err==CL_SUCCESS);
 
     cl::Event e;
     t = mysecond();
@@ -430,8 +443,9 @@ int main(int argc, char * argv[])
     err=e.wait();
     t = 1.0E6 * (mysecond() - t);
 
-    streamqueue.enqueueReadBuffer(Buffer_A, CL_TRUE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-    err=streamqueue.finish();
+    err = clEnqueueSVMUnmap(streamqueue(),
+                            reinterpret_cast<void *>(A), 0, NULL, NULL);
+    assert(err==CL_SUCCESS);
 
 
     printf("Each test below will take on the order"
@@ -451,10 +465,24 @@ int main(int argc, char * argv[])
         std::cout << "Execute iteration " << (k + 1) << " of " << NTIMES << std::endl;
         //Write data to device
         times[4][k] = mysecond();
-        streamqueue.enqueueWriteBuffer(Buffer_A, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-        streamqueue.enqueueWriteBuffer(Buffer_B, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);
-        streamqueue.enqueueWriteBuffer(Buffer_C, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
-        err = streamqueue.finish();
+        err = clEnqueueSVMMap(streamqueue(), CL_TRUE,
+                                CL_MAP_READ | CL_MAP_WRITE,
+                                reinterpret_cast<void *>(A),
+                                sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 0,
+                                NULL, NULL);
+        assert(err==CL_SUCCESS);
+        err = clEnqueueSVMMap(streamqueue(), CL_TRUE,
+                                CL_MAP_READ | CL_MAP_WRITE,
+                                reinterpret_cast<void *>(B),
+                                sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 0,
+                                NULL, NULL);
+        assert(err==CL_SUCCESS);
+        err = clEnqueueSVMMap(streamqueue(), CL_TRUE,
+                                CL_MAP_READ | CL_MAP_WRITE,
+                                reinterpret_cast<void *>(C),
+                                sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 0,
+                                NULL, NULL);
+        assert(err==CL_SUCCESS);
         times[4][k] = mysecond() - times[4][k];
 
         assert(err==CL_SUCCESS);
@@ -486,12 +514,16 @@ int main(int argc, char * argv[])
 
         // read the output
         times[5][k] = mysecond();
-        streamqueue.enqueueReadBuffer(Buffer_A, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, A);
-        streamqueue.enqueueReadBuffer(Buffer_B, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, B);
-        streamqueue.enqueueReadBuffer(Buffer_C, CL_FALSE, 0, sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, C);
-        err=streamqueue.finish();
-        times[5][k] = mysecond() - times[5][k];
+        err = clEnqueueSVMUnmap(streamqueue(),
+                                reinterpret_cast<void *>(A), 0, NULL, NULL);
         assert(err==CL_SUCCESS);
+        err = clEnqueueSVMUnmap(streamqueue(),
+                                reinterpret_cast<void *>(B), 0, NULL, NULL);
+        assert(err==CL_SUCCESS);
+        err = clEnqueueSVMUnmap(streamqueue(),
+                                reinterpret_cast<void *>(C), 0, NULL, NULL);
+        assert(err==CL_SUCCESS);
+        times[5][k] = mysecond() - times[5][k];
 
     }
 
@@ -522,6 +554,10 @@ int main(int argc, char * argv[])
     /* --- Check Results --- */
     checkSTREAMresults();
     printf(HLINE);
+
+    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(A));
+    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(B));
+    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(C));
     return 0;
 }
 
