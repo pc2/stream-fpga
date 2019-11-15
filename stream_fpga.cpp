@@ -298,7 +298,7 @@ int main(int argc, char * argv[])
     assert(err==CL_SUCCESS);
     std::cout << "Device Name:   " << DeviceList[DEVICE_ID].getInfo<CL_DEVICE_NAME>() << std::endl;
     //Create Command queue
-    cl::CommandQueue streamqueue(streamcontext, DeviceList[0]);
+    cl::CommandQueue streamqueue(streamcontext, DeviceList[DEVICE_ID]);
     assert(err==CL_SUCCESS);
 
     // Initalize SVM for Buffers
@@ -308,7 +308,7 @@ int main(int argc, char * argv[])
     B = reinterpret_cast<STREAM_TYPE*>(
                             clSVMAlloc(streamcontext(), 0 ,
                             sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 1024));
-    B = reinterpret_cast<STREAM_TYPE*>(
+    C = reinterpret_cast<STREAM_TYPE*>(
                             clSVMAlloc(streamcontext(), 0 ,
                             sizeof(STREAM_TYPE)*STREAM_ARRAY_SIZE, 1024));
 
