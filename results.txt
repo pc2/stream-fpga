@@ -3,6 +3,7 @@ Frequencies are given in MHz. fMax are retrieved from the AOC report.
 
 Results for Single Precision
 =============================
+Executed using arrays with 100000000 elements.
 The following environment variables where set for the kernel file:
 UNROLL_COUNT=16 
 
@@ -103,7 +104,14 @@ UNROLL_COUNT=16
     PCI Read:        6306.2     0.190343     0.190289     0.190388
 
     Non-Interleaved:
-    fMax=
+    fMax=378.64
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           35187.9     0.022747     0.022735     0.022761
+    Scale:          35172.7     0.022754     0.022745     0.022769
+    Add:            52800.6     0.022739     0.022727     0.022749
+    Triad:          52763.5     0.022753     0.022743     0.022765
+    PCI Write:       6321.3     0.189897     0.189834     0.189961
+    PCI Read:        6405.2     0.187370     0.187347     0.187391
 
 
 
@@ -132,8 +140,32 @@ UNROLL_COUNT=16
     PCI Write:       6415.0     0.187305     0.187060     0.187613
     PCI Read:        6478.7     0.189044     0.185221     0.193868
 
+
+
+6.  System:     HARP2
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
+    FPGA:       Intel BDW+FPGA hybrid CPU/FPGA Arria 10 GX1150
+    Compiler:   Altera SDK for OpenCL, 64-Bit Offline Compiler, Version 16.0.2 Build 222
+
+    Interleaved Memory:
+    fMax=252.9
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           15416.1     0.051917     0.051894     0.051965
+    Scale:          15674.0     0.051056     0.051040     0.051066
+    Add:            20816.4     0.057661     0.057647     0.057676
+    Triad:          20543.0     0.058422     0.058414     0.058438
+    PCI Write:   74017129.4     0.000031     0.000016     0.000045
+    PCI Read:    75121862.7     0.000028     0.000016     0.000041
+
+    !!!!
+    !! NOTE: The data buffers are not copied and mapping/unmapping them introduces a 
+    !!       constant overhead. The PCI rows in this result measure this overhead and 
+    !!       no PCI communication!
+    !!!!
+
 Results for Double Precision
 =============================
+Executed using arrays with 50000000 elements.
 UNROLL_COUNT=8 for all kernels
 
 1.  System:     Noctua
@@ -225,15 +257,22 @@ UNROLL_COUNT=8 for all kernels
     Interleaved Memory:
     fMax=243.96
     Function    Best Rate MB/s  Avg time     Min time     Max time
-    Copy:           31178.0     0.051322     0.051318     0.051338
-    Scale:          31182.4     0.051312     0.051311     0.051315
-    Add:            46775.5     0.051310     0.051309     0.051311
-    Triad:          46751.6     0.051338     0.051335     0.051341
-    PCI Write:       6313.8     0.380221     0.380117     0.380315
-    PCI Read:        6308.4     0.380464     0.380444     0.380494
+    Copy:           31162.4     0.025674     0.025672     0.025677
+    Scale:          31166.2     0.025670     0.025669     0.025672
+    Add:            46740.1     0.025675     0.025674     0.025679
+    Triad:          46708.9     0.025693     0.025691     0.025695
+    PCI Write:       6319.6     0.189941     0.189884     0.189996
+    PCI Read:        6302.0     0.190504     0.190416     0.190622
 
     Non-Interleaved:
-    fMax=
+    fMax=362.58
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           33162.1     0.024133     0.024124     0.024139
+    Scale:          33111.4     0.024171     0.024161     0.024176
+    Add:            49757.4     0.024126     0.024117     0.024132
+    Triad:          49472.3     0.024263     0.024256     0.024268
+    PCI Write:       6319.0     0.189989     0.189902     0.190059
+    PCI Read:        6405.0     0.187421     0.187355     0.187522
 
 
 
@@ -261,3 +300,25 @@ UNROLL_COUNT=8 for all kernels
     Triad:          23516.1     0.051060     0.051029     0.051139
     PCI Write:       6408.7     0.188771     0.187246     0.191645
     PCI Read:        6373.6     0.191591     0.188277     0.195962
+
+
+
+6.  System:     HARP2
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
+    FPGA:       Intel BDW+FPGA hybrid CPU/FPGA Arria 10 GX1150
+    Compiler:   Altera SDK for OpenCL, 64-Bit Offline Compiler, Version 16.0.2 Build 222
+
+    Interleaved Memory:
+    fMax=195.23
+    Copy:           14735.5     0.054322     0.054291     0.054338
+    Scale:          15410.1     0.051922     0.051914     0.051927
+    Add:            18619.1     0.064461     0.064450     0.064471
+    Triad:          18651.5     0.064355     0.064338     0.064367
+    PCI Write:   79891504.8     0.000031     0.000015     0.000046
+    PCI Read:    75121862.7     0.000027     0.000016     0.000041
+
+    !!!!
+    !! NOTE: The data buffers are not copied and mapping/unmapping them introduces a 
+    !!       constant overhead. The PCI rows in this result measure this overhead and 
+    !!       no PCI communication!
+    !!!!
