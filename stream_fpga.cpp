@@ -304,7 +304,7 @@ int main(int argc, char * argv[])
     assert(err==CL_SUCCESS);
     std::cout << "Device Name:   " << DeviceList[DEVICE_ID].getInfo<CL_DEVICE_NAME>() << std::endl;
     //Create Command queue
-    cl::CommandQueue streamqueue(streamcontext, DeviceList[0]);
+    cl::CommandQueue streamqueue(streamcontext, DeviceList[DEVICE_ID]);
     assert(err==CL_SUCCESS);
 
 #ifdef NO_INTERLEAVING
