@@ -12,3 +12,4 @@
 stream_fpga
 stream_kernels
 bin/*
+*.rbf
