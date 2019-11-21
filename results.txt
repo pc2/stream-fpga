@@ -115,7 +115,35 @@ UNROLL_COUNT=16
 
 
 
-5.  System:     FPGA Research Clusters
+5.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.3.0
+    BSP Version:19.2.0_hpc
+
+    Interleaved Memory:
+    fMax=265.81
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           33953.0     0.023564     0.023562     0.023567
+    Scale:          33958.5     0.023560     0.023558     0.023562
+    Add:            49403.4     0.024293     0.024290     0.024296
+    Triad:          48575.2     0.024707     0.024704     0.024709
+    PCI Write:       6319.5     0.189961     0.189889     0.190036
+    PCI Read:        6293.0     0.190761     0.190688     0.190918
+
+    Non-Interleaved:
+    fMax=307.78
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           33555.4     0.023847     0.023841     0.023855
+    Scale:          33581.3     0.023836     0.023823     0.023844
+    Add:            50362.9     0.023838     0.023827     0.023845
+    Triad:          50333.7     0.023842     0.023841     0.023844
+    PCI Write:       6307.8     0.190291     0.190242     0.190335
+    PCI Read:        6405.3     0.187365     0.187346     0.187387
+
+
+
+6.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
@@ -142,7 +170,7 @@ UNROLL_COUNT=16
 
 
 
-6.  System:     HARP2
+7.  System:     HARP2
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Intel BDW+FPGA hybrid CPU/FPGA Arria 10 GX1150
     Compiler:   Altera SDK for OpenCL, 64-Bit Offline Compiler, Version 16.0.2 Build 222
@@ -276,7 +304,35 @@ UNROLL_COUNT=8 for all kernels
 
 
 
-5.  System:     FPGA Research Clusters
+5.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA card:  Bittware 520N (Intel Stratix 10 GX2800)
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.3.0
+    BSP Version:19.2.0_hpc
+
+    Interleaved Memory:
+    fMax=254.0
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           32468.7     0.024642     0.024639     0.024646
+    Scale:          32472.8     0.024639     0.024636     0.024642
+    Add:            48589.2     0.024700     0.024697     0.024704
+    Triad:          48217.8     0.024893     0.024887     0.024896
+    PCI Write:       6319.2     0.190012     0.189897     0.190127
+    PCI Read:        6385.8     0.187974     0.187918     0.188051
+
+    Non-Interleaved:
+    fMax=320.92
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           32614.5     0.024545     0.024529     0.024562
+    Scale:          32626.5     0.024532     0.024520     0.024548
+    Add:            48941.2     0.024530     0.024519     0.024545
+    Triad:          48861.9     0.024574     0.024559     0.024586
+    PCI Write:       6317.5     0.190006     0.189948     0.190101
+    PCI Read:        6397.4     0.187635     0.187575     0.187734
+
+
+
+6.  System:     FPGA Research Clusters
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Bittware 385A (Intel Arria 10 GX1150)
     Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 17.1.2
@@ -303,7 +359,7 @@ UNROLL_COUNT=8 for all kernels
 
 
 
-6.  System:     HARP2
+7.  System:     HARP2
     Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/fpga-research-clusters/
     FPGA:       Intel BDW+FPGA hybrid CPU/FPGA Arria 10 GX1150
     Compiler:   Altera SDK for OpenCL, 64-Bit Offline Compiler, Version 16.0.2 Build 222
