@@ -94,6 +94,13 @@ For synthesizing the vector type version run:
 ## Exemplary Results
 
 The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
-The detailed results of the runs are given in [results.txt](results.txt).
-The best achieved data rates for single and double precision:
-![Best data rate results](best_data_rates.jpeg)
+The detailed results of the runs are given in [results.txt](results.txt) and as
+CSV files in the subfolder `csv_result_export`.
+
+#### Single Precision
+
+![Single precision results](csv_result_export/sp_plot.jpeg)
+
+#### Double Precision
+
+![Double precision results](csv_result_export/dp_plot.jpeg)
