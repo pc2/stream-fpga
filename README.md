@@ -94,6 +94,28 @@ For synthesizing the vector type version run:
 ## Exemplary Results
 
 The benchmark was executed on Bittware 520N cards for different Intel® Quartus® Prime versions.
-The detailed results of the runs are given in [results.txt](results.txt).
-The best achieved data rates for single and double precision:
-![Best data rate results](best_data_rates.jpeg)
+The detailed results of the runs are given in [results.txt](results.txt) and as
+CSV files in the subfolder `csv_result_export`.
+
+#### Single Precision
+
+![Single precision results](csv_result_export/sp_plot.jpeg)
+
+#### Double Precision
+
+![Double precision results](csv_result_export/dp_plot.jpeg)
+
+#### Usage of the Global Ring
+
+It is possible to force a ring interconnect for the global memory with the compiler command
+`-global-ring`. To test the impact of this type of interconnect, the benchmark was also 
+synthesized with the additional parameters `-global-ring -duplicate-ring` for all SDK versions
+supporting this option.
+
+The raw data of these runs can be found in the folder `csv_result_export`.
+
+##### Single Precision
+![Single precision results](csv_result_export/sp_global_ring_plot.jpeg)
+
+##### Double Precision
+![Double precision results](csv_result_export/dp_global_ring_plot.jpeg)

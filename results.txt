@@ -191,6 +191,36 @@ UNROLL_COUNT=16
     !!       no PCI communication!
     !!!!
 
+
+
+8.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA:       Intel FPGA PAC D5005
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.3.0
+    BSP Version:18.1.2
+
+    Interleaved Memory:
+    fMax=244.37
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           31109.0     0.025743     0.025716     0.025781
+    Scale:          31144.2     0.025715     0.025687     0.025756
+    Add:            46705.4     0.025717     0.025693     0.025775
+    Triad:          46696.3     0.025720     0.025698     0.025758
+    PCI Write:       8863.4     0.135605     0.135388     0.135980
+    PCI Read:        7491.7     0.160535     0.160178     0.160861
+
+    Non-Interleaved:
+    fMax=313.28
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           29244.1     0.027398     0.027356     0.027434
+    Scale:          28044.5     0.028559     0.028526     0.028595
+    Add:            42087.5     0.028547     0.028512     0.028603
+    Triad:          41905.0     0.028712     0.028636     0.028804
+    PCI Write:       8678.2     0.155757     0.138277     0.183577
+    PCI Read:        7365.4     0.179162     0.162925     0.210698
+
+
+
 Results for Double Precision
 =============================
 Executed using arrays with 50000000 elements.
@@ -378,3 +408,31 @@ UNROLL_COUNT=8 for all kernels
     !!       constant overhead. The PCI rows in this result measure this overhead and 
     !!       no PCI communication!
     !!!!
+
+
+
+8.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA:       Intel FPGA PAC D5005
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.3.0
+    BSP Version:18.1.2
+
+    Interleaved Memory:
+    fMax=254.0
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           31692.2     0.025302     0.025243     0.025351
+    Scale:          31694.3     0.025305     0.025241     0.025341
+    Add:            47543.7     0.025298     0.025240     0.025338
+    Triad:          47532.5     0.025305     0.025246     0.025347
+    PCI Write:       8931.8     0.134656     0.134352     0.134971
+    PCI Read:        7535.7     0.159409     0.159241     0.159720
+
+    Non-Interleaved:
+    fMax=320.92
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           29106.6     0.027511     0.027485     0.027536
+    Scale:          28046.6     0.028585     0.028524     0.028629
+    Add:            42072.8     0.028547     0.028522     0.028612
+    Triad:          42047.8     0.028587     0.028539     0.028631
+    PCI Write:       8638.0     0.167112     0.138921     0.208923
+    PCI Read:        7285.5     0.193966     0.164710     0.241611
