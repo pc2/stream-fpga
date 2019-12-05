@@ -104,3 +104,18 @@ CSV files in the subfolder `csv_result_export`.
 #### Double Precision
 
 ![Double precision results](csv_result_export/dp_plot.jpeg)
+
+#### Usage of the Global Ring
+
+It is possible to force a ring interconnect for the global memory with the compiler command
+`-global-ring`. To test the impact of this type of interconnect, the benchmark was also 
+synthesized with the additional parameters `-global-ring -duplicate-ring` for all SDK versions
+supporting this option.
+
+The raw data of these runs can be found in the folder `csv_result_export`.
+
+##### Single Precision
+![Single precision results](csv_result_export/sp_global_ring_plot.jpeg)
+
+##### Double Precision
+![Double precision results](csv_result_export/dp_global_ring_plot.jpeg)
