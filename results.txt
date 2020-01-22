@@ -221,6 +221,40 @@ UNROLL_COUNT=16
 
 
 
+9.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA:       Intel FPGA PAC D5005 using SVM
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.4.0
+    BSP Version:18.1.2_svm
+
+    Interleaved Memory:
+    fMax=296.12
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           19255.3     0.041615     0.041547     0.041697
+    Scale:          20487.6     0.039103     0.039048     0.039184
+    Add:            14709.2     0.081682     0.081582     0.081774
+    Triad:          14676.7     0.081817     0.081762     0.081857
+    PCI Write:  419430400.0     0.000003     0.000003     0.000004
+    PCI Read:   419430400.0     0.000003     0.000003     0.000006
+
+    Non-Interleaved:
+    fMax=296.12
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           19234.5     0.041710     0.041592     0.041775
+    Scale:          20179.1     0.039771     0.039645     0.039899
+    Add:            14677.2     0.081870     0.081759     0.081907
+    Triad:          14670.8     0.081833     0.081795     0.081899
+    PCI Write:  387166523.1     0.000004     0.000003     0.000004
+    PCI Read:   419430400.0     0.000003     0.000003     0.000004
+
+    !!!!
+    !! NOTE: The data buffers are not copied and mapping/unmapping them introduces a 
+    !!       constant overhead. The PCI rows in this result measure this overhead and 
+    !!       no PCI communication!
+    !!!!
+
+
+
 Results for Double Precision
 =============================
 Executed using arrays with 50000000 elements.
@@ -436,3 +470,37 @@ UNROLL_COUNT=8 for all kernels
     Triad:          42047.8     0.028587     0.028539     0.028631
     PCI Write:       8638.0     0.167112     0.138921     0.208923
     PCI Read:        7285.5     0.193966     0.164710     0.241611
+
+
+
+9.  System:     Noctua
+    Url:        https://pc2.uni-paderborn.de/hpc-services/available-systems/noctua/
+    FPGA:       Intel FPGA PAC D5005 using SVM
+    Compiler:   Intel(R) FPGA SDK for OpenCL(TM), 64-Bit Offline Compiler, Version: 19.4.0
+    BSP Version:18.1.2_svm
+
+    Interleaved Memory:
+    fMax=326.58
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           19237.7     0.041656     0.041585     0.041723
+    Scale:          20886.7     0.038456     0.038302     0.038566
+    Add:            14575.5     0.082394     0.082330     0.082478
+    Triad:          14578.3     0.082346     0.082314     0.082383
+    PCI Write:  419430400.0     0.000004     0.000003     0.000004
+    PCI Read:   419430400.0     0.000004     0.000003     0.000006
+
+    Non-Interleaved:
+    fMax=326.58
+    Function    Best Rate MB/s  Avg time     Min time     Max time
+    Copy:           19186.0     0.041747     0.041697     0.041840
+    Scale:          20561.3     0.038969     0.038908     0.039044
+    Add:            14574.8     0.082398     0.082334     0.082447
+    Triad:          14581.7     0.082371     0.082295     0.082418
+    PCI Write:  419430400.0     0.000003     0.000003     0.000004
+    PCI Read:   419430400.0     0.000003     0.000003     0.000004
+
+    !!!!
+    !! NOTE: The data buffers are not copied and mapping/unmapping them introduces a 
+    !!       constant overhead. The PCI rows in this result measure this overhead and 
+    !!       no PCI communication!
+    !!!!
