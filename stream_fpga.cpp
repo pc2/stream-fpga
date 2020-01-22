@@ -52,8 +52,10 @@
 #include <float.h>
 #include <unistd.h>
 
+#define CL_VERSION_2_0
 #include "CL/opencl.h"
 #include "CL/cl.hpp"
+
 
 #if (QUARTUS_MAJOR_VERSION >= 19)
 #include <CL/cl_ext_intelfpga.h>
@@ -362,10 +364,10 @@ int main(int argc, char * argv[])
     scalar = 3.0;
     test_scalar = 2.0E0;
     //prepare kernels
-    err = clSetKernelArgSVMPointerAltera(testkernel(), 0,
+    err = clSetKernelArgSVMPointer(testkernel(), 0,
                                         reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(testkernel(), 1,
+    err = clSetKernelArgSVMPointer(testkernel(), 1,
                                         reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
     err = testkernel.setArg(2, test_scalar);
@@ -373,18 +375,18 @@ int main(int argc, char * argv[])
     err = testkernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of copy kernel
-    err = clSetKernelArgSVMPointerAltera(copykernel(), 0,
+    err = clSetKernelArgSVMPointer(copykernel(), 0,
                                         reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(copykernel(), 1,
+    err = clSetKernelArgSVMPointer(copykernel(), 1,
                                         reinterpret_cast<void*>(C));
     err = copykernel.setArg(2, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of scale kernel
-    err = clSetKernelArgSVMPointerAltera(scalekernel(), 0,
+    err = clSetKernelArgSVMPointer(scalekernel(), 0,
                                         reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(scalekernel(), 1,
+    err = clSetKernelArgSVMPointer(scalekernel(), 1,
                                         reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
     err = scalekernel.setArg(2, scalar);
@@ -392,25 +394,25 @@ int main(int argc, char * argv[])
     err = scalekernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of add kernel
-    err = clSetKernelArgSVMPointerAltera(addkernel(), 0,
+    err = clSetKernelArgSVMPointer(addkernel(), 0,
                                         reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(addkernel(), 1,
+    err = clSetKernelArgSVMPointer(addkernel(), 1,
                                         reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(addkernel(), 2,
+    err = clSetKernelArgSVMPointer(addkernel(), 2,
                                         reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
     err = addkernel.setArg(3, STREAM_ARRAY_SIZE);
     assert(err==CL_SUCCESS);
     //set arguments of triad kernel
-    err = clSetKernelArgSVMPointerAltera(triadkernel(), 0,
+    err = clSetKernelArgSVMPointer(triadkernel(), 0,
                                         reinterpret_cast<void*>(B));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(triadkernel(), 1,
+    err = clSetKernelArgSVMPointer(triadkernel(), 1,
                                         reinterpret_cast<void*>(C));
     assert(err==CL_SUCCESS);
-    err = clSetKernelArgSVMPointerAltera(triadkernel(), 2,
+    err = clSetKernelArgSVMPointer(triadkernel(), 2,
                                         reinterpret_cast<void*>(A));
     assert(err==CL_SUCCESS);
     err = triadkernel.setArg(3, scalar);
@@ -555,9 +557,9 @@ int main(int argc, char * argv[])
     checkSTREAMresults();
     printf(HLINE);
 
-    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(A));
-    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(B));
-    clSVMFreeAltera(streamcontext(), reinterpret_cast<void *>(C));
+    clSVMFree(streamcontext(), reinterpret_cast<void *>(A));
+    clSVMFree(streamcontext(), reinterpret_cast<void *>(B));
+    clSVMFree(streamcontext(), reinterpret_cast<void *>(C));
     return 0;
 }
 
